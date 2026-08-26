@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en" x-data="projectPage()" :class="{ 'dark': dark }" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="{{ project.short_description|default:project.description|truncatechars:160 }}">
+  <meta property="og:title" content="{{ project.title }} — Project case study">
+  <meta property="og:description" content="{{ project.short_description|default:project.description|truncatechars:160 }}">
+  <meta property="og:type" content="article">
+  <title>{{ project.title }} — Project case study</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            display: ['PT Sans', 'sans-serif'],
+            body: ['DM Sans', 'sans-serif']
+          },
+          colors: {
+            accent: '#FF6B2B',
+            'accent-light': '#FF8F5C'
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+    html, body { font-family: 'DM Sans', sans-serif; }
+    h1, h2, h3, h4 { font-family: 'PT Sans', sans-serif; }
+    body { transition: background-color .3s ease, color .3s ease; }
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      opacity: .35;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 200 200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='4' stitchTiles='stitchTiles'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='.045'/%3E%3C/svg%3E");
+    }
+    [x-cloak] { display: none !important; }
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: transparent; }
+    ::-webkit-scrollbar-thumb { background: #FF6B2B; border-radius: 99px; }
+    .progress-line {
+      position: fixed;
+      top: 0;
+      left: 0;
+      z-index: 80;
+      height: 3px;
+      background: #FF6B2B;
+      transition: width .1s linear;
+    }
+    .nav-link { position: relative; }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      bottom: -3px;
+      width: 0;
+      height: 1.5px;
+      background: currentColor;
+      transition: width .22s ease;
+    }
+    .nav-link:hover::after { width: 100%; }
+    .hero-frame { position: relative; isolation: isolate; }
+    .hero-frame::before {
+      content: '';
+      position: absolute;
+      top: 1.5rem;
+      bottom: 1.5rem;
+      left: -1rem;
+      width: .3rem;
+      border-radius: 999px;
+      background: #FF6B2B;
+      z-index: -1;
+    }
+    .project-copy p {
+      color: #52525b;
+      font-size: 1.05rem;
+      line-height: 1.9;
+      margin-bottom: 1.5rem;
+    }
+    .dark .project-copy p { color: #a1a1aa; }
+    .reveal {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity .55s cubic-bezier(.4, 0, .2, 1), transform .55s cubic-bezier(.4, 0, .2, 1);
+    }
+    .reveal.is-visible { opacity: 1; transform: none; }
+    .focus-ring:focus-visible {
+      outline: 3px solid rgba(255, 107, 43, .38);
+      outline-offset: 4px;
+    }
+    @media (max-width: 767px) {
+      .hero-frame::before { left: -.55rem; }
+    }
+    @media (prefers-reduced-motion: reduce) {
+      html { scroll-behavior: auto !important; }
+      *, *::before, *::after { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+      .reveal { opacity: 1; transform: none; }
+    }
+  </style>
+</head>
+
+<body id="top" class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 antialiased">
+  <div class="progress-line" :style="`width: ${progress}%`" aria-hidden="true"></div>
+
+  <header class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
+          :class="scrolled ? 'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5' : 'bg-transparent'">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
+      <a href="/#hero" class="focus-ring font-display font-bold text-xl tracking-tight rounded-sm" aria-label="Back to portfolio home">
+        <span class="text-zinc-900 dark:text-white">port</span><span class="text-accent">folio</span>
+      </a>
+
+      <ul class="hidden md:flex items-center gap-8 text-sm" role="list">
+        <li><a href="/#services" class="nav-link focus-ring rounded-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Services</a></li>
+        <li><a href="/#work" class="nav-link focus-ring rounded-sm text-accent font-medium">Work</a></li>
+        <li><a href="/#about" class="nav-link focus-ring rounded-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">About</a></li>
+        <li><a href="/#contact" class="nav-link focus-ring rounded-sm text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-colors">Contact</a></li>
+      </ul>
+
+      <div class="flex items-center gap-3">
+        <button type="button" @click="dark = !dark"
+                class="focus-ring w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-sm hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
+                :aria-label="dark ? 'Use light theme' : 'Use dark theme'">
+          <span x-show="!dark" aria-hidden="true">◐</span>
+          <span x-show="dark" aria-hidden="true">◑</span>
+        </button>
+        <button type="button" @click="mobileMenu = !mobileMenu"
+                class="focus-ring md:hidden w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg"
+                :aria-expanded="mobileMenu" aria-controls="mobile-menu" aria-label="Toggle navigation">
+          <span x-text="mobileMenu ? '×' : '≡'" aria-hidden="true"></span>
+        </button>
+      </div>
+    </nav>
+
+    <div id="mobile-menu" x-show="mobileMenu" x-cloak
+         x-transition:enter="transition ease-out duration-200"
+         x-transition:enter-start="opacity-0 -translate-y-2"
+         x-transition:enter-end="opacity-100 translate-y-0"
+         class="md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
+      <ul class="px-6 py-5 flex flex-col gap-4 text-sm font-medium" role="list">
+        <li><a href="/#services" class="block" @click="mobileMenu = false">Services</a></li>
+        <li><a href="/#work" class="block text-accent" @click="mobileMenu = false">Work</a></li>
+        <li><a href="/#about" class="block" @click="mobileMenu = false">About</a></li>
+        <li><a href="/#contact" class="block" @click="mobileMenu = false">Contact</a></li>
+      </ul>
+    </div>
+  </header>
+
+  <main class="relative z-10">
+    <article>
+      <header class="pt-32 md:pt-40 pb-12">
+        <div class="max-w-6xl mx-auto px-6">
+          <a href="/#work" class="focus-ring inline-flex items-center gap-2 rounded-sm text-sm text-zinc-500 dark:text-zinc-400 hover:text-accent transition-colors mb-10">
+            <span aria-hidden="true">←</span>
+            Back to projects
+          </a>
+
+          <div class="grid lg:grid-cols-[1fr_18rem] gap-12 lg:gap-20 items-end">
+            <div>
+              <div class="flex flex-wrap items-center gap-2.5 mb-6">
+                {% if project.is_featured %}
+                  <span class="text-xs font-medium uppercase tracking-widest bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-3 py-1.5 rounded-full">Featured project</span>
+                {% endif %}
+                <span class="text-xs font-medium uppercase tracking-widest px-3 py-1.5 rounded-full
+                  {% if project.status == 'completed' %}bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900
+                  {% elif project.status == 'in progress' %}bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900
+                  {% else %}bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800{% endif %}">
+                  {{ project.get_status_display }}
+                </span>
+              </div>
+
+              <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">Project dossier · {{ project.created_at|date:"Y" }}</p>
+              <h1 class="reveal font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white max-w-4xl">
+                {{ project.title }}
+              </h1>
+              {% if project.short_description %}
+                <p class="reveal mt-7 text-lg md:text-xl leading-relaxed text-zinc-500 dark:text-zinc-400 max-w-3xl">
+                  {{ project.short_description }}
+                </p>
+              {% endif %}
+            </div>
+
+            <aside class="reveal border-t lg:border-t-0 lg:border-l border-zinc-200 dark:border-zinc-800 pt-6 lg:pt-0 lg:pl-8">
+              <dl class="grid grid-cols-2 lg:grid-cols-1 gap-6">
+                <div>
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">Published</dt>
+                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ project.created_at|date:"M Y" }}</dd>
+                </div>
+                <div>
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">Last updated</dt>
+                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ project.updated_at|date:"M Y" }}</dd>
+                </div>
+                <div class="col-span-2 lg:col-span-1">
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-2">Toolbox</dt>
+                  <dd class="flex flex-wrap gap-2">
+                    {% for skill in project.skills.all %}
+                      <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400">{{ skill.title }}</span>
+                    {% empty %}
+                      <span class="text-sm text-zinc-400">Not listed yet</span>
+                    {% endfor %}
+                  </dd>
+                </div>
+              </dl>
+            </aside>
+          </div>
+        </div>
+      </header>
+
+      <section class="max-w-6xl mx-auto px-6 pb-20" aria-label="Project cover">
+        <div class="hero-frame reveal">
+          {% if project.thumbnail %}
+            <div class="overflow-hidden rounded-3xl bg-zinc-100 dark:bg-zinc-900 shadow-2xl shadow-zinc-900/10 dark:shadow-black/30">
+              <img src="{{ project.thumbnail.url }}" alt="{{ project.title }} project cover" class="w-full h-[22rem] md:h-[34rem] object-cover" loading="eager">
+            </div>
+          {% else %}
+            <div class="rounded-3xl min-h-[22rem] md:min-h-[34rem] flex items-center justify-center overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+              <div class="text-center px-6">
+                <span class="block font-display font-bold text-8xl md:text-9xl text-zinc-300 dark:text-zinc-800">{{ project.title|first|upper }}</span>
+                <span class="block mt-5 text-xs uppercase tracking-[.25em] text-zinc-400">Cover image coming soon</span>
+              </div>
+            </div>
+          {% endif %}
+        </div>
+      </section>
+
+      {% if project.description %}
+        <section id="project-overview" class="py-20 border-y border-zinc-100 dark:border-zinc-900">
+          <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-[14rem_1fr] gap-10 md:gap-20">
+            <div>
+              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">The project</p>
+              <h2 class="font-display font-bold text-3xl md:text-4xl text-zinc-900 dark:text-white">Overview</h2>
+            </div>
+            <div class="project-copy max-w-3xl reveal">
+              {{ project.description|linebreaks }}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+
+      {% if project.features.all %}
+        <section id="features" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="max-w-2xl mb-14">
+              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">What makes it work</p>
+              <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Key features</h2>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-5">
+              {% for feature in project.features.all %}
+                <article class="reveal group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-7 md:p-8 hover:border-accent transition-colors">
+                  <div class="flex items-start gap-5">
+                    <span class="font-display font-bold text-sm text-accent pt-1">{{ forloop.counter|stringformat:"02d" }}</span>
+                    <div>
+                      <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">{{ feature.title }}</h3>
+                      {% if feature.description %}
+                        <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ feature.description }}</p>
+                      {% endif %}
+                    </div>
+                  </div>
+                </article>
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+
+      {% if project.images.all %}
+        <section id="gallery" class="py-24">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
+              <div>
+                <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">A closer look</p>
+                <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Project gallery</h2>
+              </div>
+              <p class="text-sm text-zinc-400">{{ project.images.all|length }} image{{ project.images.all|length|pluralize }}</p>
+            </div>
+
+            <div class="grid md:grid-cols-2 gap-6">
+              {% for project_image in project.images.all %}
+                {% if project_image.image %}
+                  <figure class="reveal {% if forloop.first %}md:col-span-2{% endif %}">
+                    <div class="overflow-hidden rounded-2xl bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
+                      <img src="{{ project_image.image.url }}" alt="{{ project_image.caption|default:project.title }}" class="w-full {% if forloop.first %}h-72 md:h-[32rem]{% else %}h-64 md:h-80{% endif %} object-cover" loading="lazy">
+                    </div>
+                    {% if project_image.caption %}
+                      <figcaption class="mt-3 text-sm text-zinc-500 dark:text-zinc-400">{{ project_image.caption }}</figcaption>
+                    {% endif %}
+                  </figure>
+                {% endif %}
+              {% endfor %}
+            </div>
+          </div>
+        </section>
+      {% endif %}
+
+      {% if project.github_link or project.linkedin_link %}
+        <section class="py-20 border-y border-zinc-100 dark:border-zinc-900">
+          <div class="max-w-6xl mx-auto px-6">
+            <div class="rounded-3xl bg-zinc-900 dark:bg-zinc-800 px-8 py-10 md:px-12 md:py-12 flex flex-col md:flex-row md:items-center justify-between gap-8 relative overflow-hidden">
+              <div class="absolute -right-16 -top-20 w-64 h-64 bg-accent/20 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+              <div class="relative z-10">
+                <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Explore the work</p>
+                <h2 class="font-display font-bold text-3xl md:text-4xl text-white">See the project in context.</h2>
+              </div>
+              <div class="relative z-10 flex flex-wrap gap-3">
+                {% if project.github_link %}
+                  <a href="{{ project.github_link }}" target="_blank" rel="noopener noreferrer" class="focus-ring inline-flex items-center gap-2 rounded-full bg-accent text-white px-6 py-3 text-sm font-medium hover:bg-accent-light transition-colors">
+                    View source <span aria-hidden="true">↗</span>
+                  </a>
+                {% endif %}
+                {% if project.linkedin_link %}
+                  <a href="{{ project.linkedin_link }}" target="_blank" rel="noopener noreferrer" class="focus-ring inline-flex items-center gap-2 rounded-full border border-zinc-700 text-white px-6 py-3 text-sm font-medium hover:border-zinc-500 transition-colors">
+                    LinkedIn post <span aria-hidden="true">↗</span>
+                  </a>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+        </section>
+      {% endif %}
+    </article>
+
+    {% if related_projects %}
+      <section class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+        <div class="max-w-6xl mx-auto px-6">
+          <div class="mb-12">
+            <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Keep exploring</p>
+            <h2 class="font-display font-bold text-4xl text-zinc-900 dark:text-white">More projects</h2>
+          </div>
+
+          <div class="grid md:grid-cols-3 gap-6">
+            {% for related_project in related_projects %}
+              <article class="reveal group overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
+                <a href="{% url 'core:project_detail' related_project.slug %}" class="focus-ring block rounded-2xl">
+                  {% if related_project.thumbnail %}
+                    <img src="{{ related_project.thumbnail.url }}" alt="{{ related_project.title }}" class="w-full h-48 object-cover" loading="lazy">
+                  {% else %}
+                    <div class="h-48 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 font-display font-bold text-6xl text-zinc-300 dark:text-zinc-700">{{ related_project.title|first|upper }}</div>
+                  {% endif %}
+                  <div class="p-6">
+                    <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{{ related_project.title }}</h3>
+                    {% if related_project.short_description %}
+                      <p class="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ related_project.short_description|truncatechars:105 }}</p>
+                    {% endif %}
+                    <span class="inline-block mt-5 text-sm font-medium text-accent">View project →</span>
+                  </div>
+                </a>
+              </article>
+            {% endfor %}
+          </div>
+        </div>
+      </section>
+    {% endif %}
+
+    <section class="py-24">
+      <div class="max-w-6xl mx-auto px-6 text-center">
+        <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">Next conversation</p>
+        <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white mb-5">Have a project in mind?</h2>
+        <p class="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto mb-8">Tell me what you are building, where it is stuck, and what a successful result looks like.</p>
+        <a href="/#contact" class="focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 py-3.5 text-sm font-medium hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-colors">
+          Start a conversation <span aria-hidden="true">→</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <footer class="relative z-10 border-t border-zinc-100 dark:border-zinc-900">
+    <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+      <p class="text-sm text-zinc-400">© <span x-text="year"></span> Portfolio. All rights reserved.</p>
+      <a href="#top" class="focus-ring rounded-sm text-xs text-zinc-500 hover:text-accent transition-colors">Back to top ↑</a>
+    </div>
+  </footer>
+
+  <script>
+    function projectPage() {
+      return {
+        dark: false,
+        mobileMenu: false,
+        scrolled: false,
+        progress: 0,
+        year: new Date().getFullYear(),
+
+        init() {
+          const storedTheme = localStorage.getItem('theme');
+          this.dark = storedTheme === 'dark' || (!storedTheme && window.matchMedia('(prefers-color-scheme: dark)').matches);
+          this.$watch('dark', value => localStorage.setItem('theme', value ? 'dark' : 'light'));
+
+          const updateScroll = () => {
+            this.scrolled = window.scrollY > 20;
+            const scrollable = document.documentElement.scrollHeight - window.innerHeight;
+            this.progress = scrollable > 0 ? Math.min(100, Math.round((window.scrollY / scrollable) * 100)) : 0;
+          };
+
+          window.addEventListener('scroll', updateScroll, { passive: true });
+          updateScroll();
+
+          if (!window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+            const observer = new IntersectionObserver(entries => {
+              entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                  entry.target.classList.add('is-visible');
+                  observer.unobserve(entry.target);
+                }
+              });
+            }, { threshold: .08, rootMargin: '0px 0px -30px 0px' });
+
+            this.$nextTick(() => document.querySelectorAll('.reveal').forEach(element => observer.observe(element)));
+          } else {
+            this.$nextTick(() => document.querySelectorAll('.reveal').forEach(element => element.classList.add('is-visible')));
+          }
+        }
+      };
+    }
+  </script>
+</body>
+</html>
