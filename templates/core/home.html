@@ -1,0 +1,258 @@
+{% extends "base.html" %}
+
+{% block title %}{{ display_name }} — Python & Django Developer{% endblock %}
+{% block meta_description %}{% if profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Portfolio of {{ display_name }}, focused on thoughtful web applications, reliable backends, and clear user experiences.{% endif %}{% endblock %}
+{% block og_title %}{{ display_name }} — Developer Portfolio{% endblock %}
+{% block og_description %}{% if profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Selected web projects, technical skills, and development work.{% endif %}{% endblock %}
+
+{% block extra_head %}
+  <style>
+    .hero-panel { position: relative; isolation: isolate; }
+    .hero-panel::before {
+      content: '';
+      position: absolute;
+      inset: 1rem -1rem -1rem 1rem;
+      border: 1px solid rgba(255, 107, 43, .45);
+      border-radius: 1.75rem;
+      z-index: -1;
+    }
+    .hero-panel::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      border-radius: 1.75rem;
+      opacity: .28;
+      background-image:
+        linear-gradient(rgba(113, 113, 122, .18) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(113, 113, 122, .18) 1px, transparent 1px);
+      background-size: 2rem 2rem;
+    }
+    .project-card-media img { transition: transform .55s cubic-bezier(.4, 0, .2, 1); }
+    .project-card:hover .project-card-media img { transform: scale(1.035); }
+    .service-mark {
+      font-family: 'PT Sans', sans-serif;
+      font-weight: 700;
+      letter-spacing: -.06em;
+    }
+    @media (max-width: 767px) {
+      .hero-panel::before { inset: .65rem -.5rem -.65rem .5rem; }
+    }
+  </style>
+{% endblock %}
+
+{% block content %}
+  <section id="hero" class="relative min-h-screen flex items-center pt-20 overflow-hidden">
+    <div class="absolute top-28 right-0 w-80 h-80 bg-accent/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
+    <div class="max-w-6xl mx-auto px-6 py-20 md:py-28 w-full">
+      <div class="grid lg:grid-cols-[1.15fr_.85fr] gap-14 lg:gap-20 items-center">
+        <div>
+          <p class="reveal text-xs font-medium text-accent tracking-[0.24em] uppercase mb-5">Python · Django · Web</p>
+          <h1 class="reveal font-display font-bold text-5xl sm:text-6xl lg:text-7xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white max-w-3xl">
+            I build web products that feel <span class="text-accent">clear</span> from the first click.
+          </h1>
+          <p class="reveal mt-7 text-lg md:text-xl leading-relaxed text-zinc-500 dark:text-zinc-400 max-w-2xl">
+            {% if profile and profile.short_bio %}
+              {{ profile.short_bio }}
+            {% else %}
+              I’m {{ display_name }}, a backend-focused developer turning ideas into maintainable Django applications and thoughtful digital experiences.
+            {% endif %}
+          </p>
+
+          <div class="reveal flex flex-wrap gap-3 mt-9">
+            <a href="#work" class="focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 py-3.5 text-sm font-medium hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-colors">
+              View selected work <span aria-hidden="true">↓</span>
+            </a>
+            {% if owner and owner.email %}
+              <a href="mailto:{{ owner.email }}" class="focus-ring inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-7 py-3.5 text-sm font-medium hover:border-accent hover:text-accent transition-colors">Email me</a>
+            {% endif %}
+          </div>
+
+          <dl class="reveal grid grid-cols-2 sm:grid-cols-3 gap-6 mt-14 pt-8 border-t border-zinc-200 dark:border-zinc-800 max-w-2xl">
+            <div>
+              <dt class="text-xs uppercase tracking-widest text-zinc-400 mb-1.5">Projects</dt>
+              <dd class="font-display font-bold text-3xl text-zinc-900 dark:text-white">{{ project_count }}</dd>
+            </div>
+            <div>
+              <dt class="text-xs uppercase tracking-widest text-zinc-400 mb-1.5">Tools</dt>
+              <dd class="font-display font-bold text-3xl text-zinc-900 dark:text-white">{{ skill_count }}</dd>
+            </div>
+            <div class="col-span-2 sm:col-span-1">
+              <dt class="text-xs uppercase tracking-widest text-zinc-400 mb-1.5">Focus</dt>
+              <dd class="font-display font-bold text-lg text-zinc-900 dark:text-white">Django systems</dd>
+            </div>
+          </dl>
+        </div>
+
+        <div class="hero-panel reveal max-w-md w-full mx-auto lg:mr-0">
+          <div class="relative z-10 overflow-hidden rounded-[1.75rem] bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 shadow-2xl shadow-zinc-900/10 dark:shadow-black/30">
+            {% if profile and profile.avatar %}
+              <img src="{{ profile.avatar.url }}" alt="Portrait of {{ display_name }}" class="w-full h-[26rem] md:h-[31rem] object-cover" loading="eager">
+            {% else %}
+              <div class="relative h-[26rem] md:h-[31rem] flex items-center justify-center">
+                <span class="relative z-10 font-display font-bold text-[10rem] md:text-[12rem] leading-none text-zinc-300 dark:text-zinc-800">{{ display_name|first|upper }}</span>
+                <span class="absolute left-7 top-7 text-[.65rem] uppercase tracking-[.22em] text-zinc-400">Developer portrait</span>
+              </div>
+            {% endif %}
+
+            <div class="relative z-20 bg-white/95 dark:bg-zinc-950/95 backdrop-blur px-6 py-5 border-t border-zinc-200 dark:border-zinc-800 flex items-center justify-between gap-5">
+              <div class="min-w-0">
+                <p class="text-[.65rem] uppercase tracking-[.2em] text-zinc-400 mb-1">Currently building</p>
+                <p class="font-display font-bold text-lg text-zinc-900 dark:text-white truncate">{% if latest_project %}{{ latest_project.title }}{% else %}The next useful thing{% endif %}</p>
+              </div>
+              <span class="w-3 h-3 rounded-full bg-accent shrink-0 shadow-[0_0_0_6px_rgba(255,107,43,.12)]" aria-hidden="true"></span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="services" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-2xl mb-14">
+        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">What I build</p>
+        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Useful software, end to end.</h2>
+        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">From the first data model to the interface people use, each layer is designed to stay understandable and dependable.</p>
+      </div>
+
+      <div class="grid md:grid-cols-3 gap-5">
+        <article class="reveal bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
+          <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">{ }</span>
+          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Backend systems</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Django applications with clear data models, reliable business logic, authentication, and maintainable admin workflows.</p>
+        </article>
+        <article class="reveal bg-zinc-900 dark:bg-zinc-800 rounded-2xl p-8 border border-zinc-800 hover:border-accent transition-colors">
+          <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">API</span>
+          <h3 class="font-display font-bold text-xl text-white mb-3">APIs & integrations</h3>
+          <p class="text-sm leading-relaxed text-zinc-400">Practical APIs and service connections built around predictable contracts, useful errors, and secure data flow.</p>
+        </article>
+        <article class="reveal bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
+          <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">UI</span>
+          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Web interfaces</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Responsive, accessible interfaces that make complex workflows feel direct on desktop, tablet, and mobile.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section id="work" class="py-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="max-w-2xl mb-14">
+        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Selected work</p>
+        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Projects with the details left in.</h2>
+        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">Each project opens into a full case study with its decisions, features, tools, and supporting images.</p>
+      </div>
+
+      {% if featured_projects %}
+        <div class="grid lg:grid-cols-2 gap-6">
+          {% for project in featured_projects %}
+            <article class="project-card reveal group rounded-2xl overflow-hidden bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors {% if forloop.first and featured_projects|length == 3 %}lg:row-span-2{% endif %}">
+              <a href="{% url 'core:project_detail' project.slug %}" class="focus-ring block rounded-2xl h-full">
+                <div class="project-card-media overflow-hidden bg-zinc-100 dark:bg-zinc-800 {% if forloop.first and featured_projects|length == 3 %}h-72 lg:h-80{% else %}h-56{% endif %}">
+                  {% if project.thumbnail %}
+                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                  {% else %}
+                    <div class="h-full flex items-center justify-center font-display font-bold text-8xl text-zinc-300 dark:text-zinc-700">{{ project.title|first|upper }}</div>
+                  {% endif %}
+                </div>
+                <div class="p-7">
+                  <div class="flex flex-wrap items-center gap-2 mb-4">
+                    {% for skill in project.skills.all|slice:":3" %}
+                      <span class="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">{{ skill.title }}</span>
+                    {% empty %}
+                      <span class="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700">{{ project.get_status_display }}</span>
+                    {% endfor %}
+                    <span class="text-xs text-zinc-400 ml-auto">{{ project.created_at|date:"Y" }}</span>
+                  </div>
+                  <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{{ project.title }}</h3>
+                  {% if project.short_description %}
+                    <p class="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ project.short_description|truncatechars:180 }}</p>
+                  {% endif %}
+                  <span class="inline-flex mt-6 text-sm font-medium text-zinc-900 dark:text-white group-hover:text-accent transition-colors">View project →</span>
+                </div>
+              </a>
+            </article>
+          {% endfor %}
+        </div>
+      {% else %}
+        <div class="reveal rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 px-8 py-14 text-center">
+          <p class="font-display font-bold text-xl text-zinc-900 dark:text-white">Projects are being prepared.</p>
+          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Featured work will appear here as soon as it is published.</p>
+        </div>
+      {% endif %}
+    </div>
+  </section>
+
+  <section id="about" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-14 lg:gap-24 items-start">
+        <div class="lg:sticky lg:top-28">
+          <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">About</p>
+          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight">Careful systems.<br>Clear experiences.</h2>
+        </div>
+
+        <div>
+          <div class="reveal text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 space-y-5">
+            {% if profile and profile.bio %}
+              {{ profile.bio|linebreaks }}
+            {% else %}
+              <p>I enjoy the part of development where structure and experience meet: shaping data carefully, keeping application logic readable, and making the final interface easy to understand.</p>
+              <p>This portfolio is a record of that work—from the technical foundation to the details people actually see and use.</p>
+            {% endif %}
+          </div>
+
+          {% regroup skills by category as skill_groups %}
+          {% if skill_groups %}
+            <div class="reveal mt-12 border-t border-zinc-200 dark:border-zinc-800">
+              {% for group in skill_groups %}
+                <div class="grid sm:grid-cols-[10rem_1fr] gap-3 sm:gap-8 py-6 border-b border-zinc-200 dark:border-zinc-800">
+                  <h3 class="text-xs uppercase tracking-[.18em] text-zinc-400 pt-1">{{ group.grouper }}</h3>
+                  <div class="flex flex-wrap gap-2">
+                    {% for skill in group.list %}
+                      <span class="text-sm px-3 py-1.5 rounded-full bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800">{{ skill.title }}</span>
+                    {% endfor %}
+                  </div>
+                </div>
+              {% endfor %}
+            </div>
+          {% endif %}
+
+          {% if profile and profile.resume %}
+            <a href="{{ profile.resume.url }}" class="focus-ring inline-flex mt-9 rounded-sm text-sm font-medium text-accent nav-link" target="_blank" rel="noopener noreferrer">View résumé →</a>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="contact" class="py-24">
+    <div class="max-w-6xl mx-auto px-6">
+      <div class="grid lg:grid-cols-[1fr_.9fr] gap-12 lg:gap-20 items-start border-y border-zinc-200 dark:border-zinc-800 py-16">
+        <div>
+          <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Contact</p>
+          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight">Let’s talk about what you’re building.</h2>
+          <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed max-w-xl">Share the idea, the current problem, or the part that needs a second pair of eyes. A short message is enough to start.</p>
+        </div>
+
+        <div class="reveal lg:pt-8">
+          {% if owner and owner.email %}
+            <p class="text-xs uppercase tracking-[.18em] text-zinc-400 mb-3">Email</p>
+            <a href="mailto:{{ owner.email }}" class="focus-ring inline-block rounded-sm font-display font-bold text-2xl sm:text-3xl text-zinc-900 dark:text-white hover:text-accent dark:hover:text-accent transition-colors break-all">{{ owner.email }}</a>
+          {% endif %}
+
+          {% if profile and profile.github_url or profile and profile.linkedin_url %}
+            <div class="flex flex-wrap gap-3 mt-8">
+              {% if profile.github_url %}
+                <a href="{{ profile.github_url }}" target="_blank" rel="noopener noreferrer" class="focus-ring rounded-full border border-zinc-300 dark:border-zinc-700 px-5 py-2.5 text-sm font-medium hover:border-accent hover:text-accent transition-colors">GitHub ↗</a>
+              {% endif %}
+              {% if profile.linkedin_url %}
+                <a href="{{ profile.linkedin_url }}" target="_blank" rel="noopener noreferrer" class="focus-ring rounded-full border border-zinc-300 dark:border-zinc-700 px-5 py-2.5 text-sm font-medium hover:border-accent hover:text-accent transition-colors">LinkedIn ↗</a>
+              {% endif %}
+            </div>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </section>
+{% endblock %}

@@ -2,6 +2,8 @@ from django.contrib.auth import get_user_model
 from django.test import TestCase
 from django.urls import reverse
 
+from accounts.models import Profile, User
+
 from .models import Project, ProjectFeature, Skill
 
 
@@ -14,6 +16,8 @@ class ProjectDetailViewTests(TestCase):
             description="A complete project overview.",
             status=Project.Status.COMPLETED,
             is_featured=True,
+            github_link="https://github.com/example/portfolio-platform",
+            linkedin_link="https://www.linkedin.com/posts/example-project",
         )
         skill = Skill.objects.create(title="Django", category="Backend")
         self.project.skills.add(skill)
@@ -33,6 +37,8 @@ class ProjectDetailViewTests(TestCase):
         self.assertContains(response, self.project.title)
         self.assertContains(response, "Django")
         self.assertContains(response, "Dynamic project pages")
+        self.assertContains(response, "GitHub")
+        self.assertContains(response, "Source code and repository")
 
     def test_unknown_project_returns_404(self):
         response = self.client.get(
@@ -40,6 +46,47 @@ class ProjectDetailViewTests(TestCase):
         )
 
         self.assertEqual(response.status_code, 404)
+
+
+class HomeViewTests(TestCase):
+    def setUp(self):
+        self.user = User.objects.create_user(
+            username="portfolio-owner",
+            email="owner@example.com",
+            password="test-password",
+            is_superuser=True,
+            is_staff=True,
+        )
+        self.project = Project.objects.create(
+            title="Featured build",
+            slug="featured-build",
+            short_description="A featured portfolio project.",
+            is_featured=True,
+        )
+        self.skill = Skill.objects.create(title="Python", category="Backend")
+        self.project.skills.add(self.skill)
+
+    def test_home_renders_dynamic_portfolio_content(self):
+        response = self.client.get(reverse("core:home"))
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, "Featured build")
+        self.assertContains(response, "Python")
+        self.assertContains(response, "owner@example.com")
+
+    def test_home_uses_profile_content_when_available(self):
+        Profile.objects.create(
+            user=self.user,
+            short_bio="Short profile introduction.",
+            bio="Long profile biography.",
+            github_url="https://github.com/example",
+        )
+
+        response = self.client.get(reverse("core:home"))
+
+        self.assertContains(response, "Short profile introduction.")
+        self.assertContains(response, "Long profile biography.")
+        self.assertContains(response, "https://github.com/example")
 from django.urls import reverse
 
 from .models import Project

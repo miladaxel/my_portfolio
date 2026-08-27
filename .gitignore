@@ -148,3 +148,5 @@ temp/
 .serverless/
 .aws-sam/
 
+/folio-tailwind-1.0.0/folio-tailwind-1.0.0/README.md
+/folio-tailwind-1.0.0/folio-tailwind-1.0.0/.github/workflows/release.yml
