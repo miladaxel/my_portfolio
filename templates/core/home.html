@@ -38,14 +38,14 @@
   <section id="hero" class="relative min-h-screen flex items-center pt-16 overflow-hidden">
     <div class="absolute top-1/4 right-0 w-96 h-96 bg-accent/10 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
     <div class="absolute bottom-1/4 left-0 w-64 h-64 bg-zinc-200/50 dark:bg-zinc-800/30 rounded-full blur-3xl pointer-events-none" aria-hidden="true"></div>
-    <div class="relative z-10 max-w-6xl mx-auto px-6 py-24 w-full">
-      <div class="grid md:grid-cols-2 gap-12 items-center">
+    <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16 md:py-20 w-full">
+      <div class="grid md:grid-cols-[1.05fr_.95fr] gap-10 lg:gap-14 items-center">
         <div>
-          <p class="reveal text-sm font-medium text-accent tracking-widest uppercase mb-4">Python web developer</p>
-          <h1 class="reveal font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.05] tracking-tight text-zinc-900 dark:text-white mb-6">
+          <p class="reveal text-sm lg:text-base font-medium text-accent tracking-widest uppercase mb-4">Python web developer</p>
+          <h1 class="reveal font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white mb-6 lg:mb-7">
             Hi, I’m <span class="text-accent">Milad</span>
           </h1>
-          <p class="reveal text-lg md:text-xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-md mb-10">
+          <p class="reveal text-lg md:text-xl lg:text-2xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-xl mb-9 lg:mb-10">
             {% if profile and profile.short_bio %}
               {{ profile.short_bio }}
             {% else %}
@@ -54,32 +54,32 @@
           </p>
 
           <div class="reveal flex flex-wrap gap-4">
-            <a href="#work" class="hero-cta focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 py-3.5 text-sm font-medium hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors">
+            <a href="#work" class="hero-cta focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 lg:px-8 py-3.5 lg:py-4 text-sm lg:text-base font-medium hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors">
               View selected work <span aria-hidden="true">↓</span>
             </a>
             {% if owner and owner.email %}
-              <a href="mailto:{{ owner.email }}" class="focus-ring inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-7 py-3.5 text-sm font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">Email me</a>
+              <a href="mailto:{{ owner.email }}" class="focus-ring inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-7 lg:px-8 py-3.5 lg:py-4 text-sm lg:text-base font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">Email me</a>
             {% endif %}
           </div>
 
-          <dl class="reveal flex flex-wrap gap-x-8 gap-y-5 mt-14 pt-8 border-t border-zinc-100 dark:border-zinc-900">
+          <dl class="reveal flex flex-wrap gap-x-10 lg:gap-x-14 gap-y-5 mt-12 lg:mt-14 pt-7 lg:pt-8 border-t border-zinc-100 dark:border-zinc-900">
             <div>
-              <dd class="font-display font-bold text-3xl text-zinc-900 dark:text-white">{{ project_count }}</dd>
-              <dt class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Projects</dt>
+              <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">{{ project_count }}</dd>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Projects</dt>
             </div>
             <div>
-              <dd class="font-display font-bold text-3xl text-zinc-900 dark:text-white">{{ skill_count }}</dd>
-              <dt class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Tools</dt>
+              <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">{{ skill_count }}</dd>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Tools</dt>
             </div>
             <div>
-              <dd class="font-display font-bold text-3xl text-zinc-900 dark:text-white">4y</dd>
-              <dt class="text-xs text-zinc-500 dark:text-zinc-400 mt-1">Experience</dt>
+              <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">4y</dd>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Experience</dt>
             </div>
           </dl>
         </div>
 
         <div class="reveal flex justify-center md:justify-end">
-          <div class="relative w-72 h-72 md:w-80 md:h-80 lg:w-96 lg:h-96">
+          <div class="relative w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem]">
             {% if profile and profile.avatar %}
               <div class="hero-photo w-full h-full overflow-hidden rounded-3xl bg-zinc-300 dark:bg-zinc-800">
                 <img src="{{ profile.avatar.url }}" alt="Portrait of {{ display_name }}" width="800" height="800" loading="eager" fetchpriority="high">
@@ -89,7 +89,7 @@
                 <span class="font-display font-bold text-8xl text-zinc-300 dark:text-zinc-800">{{ display_name|first|upper }}</span>
               </div>
             {% endif %}
-            <div class="absolute -bottom-4 -left-4 bg-accent text-white font-display font-bold text-sm px-4 py-2.5 rounded-2xl shadow-lg">Open to projects</div>
+            <div class="absolute -bottom-4 -left-4 bg-accent text-white font-display font-bold text-sm lg:text-base px-4 lg:px-5 py-2.5 lg:py-3 rounded-2xl shadow-lg">Open to projects</div>
           </div>
         </div>
       </div>
@@ -174,14 +174,24 @@
 
   <section id="about" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
     <div class="max-w-6xl mx-auto px-6">
-      <div class="grid lg:grid-cols-[.8fr_1.2fr] gap-14 lg:gap-24 items-start">
-        <div class="lg:sticky lg:top-28">
-          <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">About</p>
-          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight">Careful systems.<br>Clear experiences.</h2>
+      <div class="grid md:grid-cols-2 gap-12 lg:gap-16 items-center">
+        <div class="reveal order-2 md:order-1">
+          {% if profile and profile.avatar %}
+            <div class="hero-photo w-full aspect-square max-w-sm mx-auto overflow-hidden rounded-3xl bg-zinc-300 dark:bg-zinc-800">
+              <img src="{{ profile.avatar.url }}" alt="Portrait of {{ display_name }}" width="700" height="700" loading="lazy">
+            </div>
+          {% else %}
+            <div class="w-full aspect-square max-w-sm mx-auto rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
+              <span class="font-display font-bold text-8xl text-zinc-300 dark:text-zinc-800">{{ display_name|first|upper }}</span>
+            </div>
+          {% endif %}
         </div>
 
-        <div>
-          <div class="reveal text-lg leading-relaxed text-zinc-600 dark:text-zinc-300 space-y-5">
+        <div class="order-1 md:order-2">
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">About me</p>
+          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">A bit about<br>who I am</h2>
+
+          <div class="reveal text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-4">
             {% if profile and profile.bio %}
               {{ profile.bio|linebreaks }}
             {% else %}
@@ -190,24 +200,19 @@
             {% endif %}
           </div>
 
-          {% regroup skills by category as skill_groups %}
-          {% if skill_groups %}
-            <div class="reveal mt-12 border-t border-zinc-200 dark:border-zinc-800">
-              {% for group in skill_groups %}
-                <div class="grid sm:grid-cols-[10rem_1fr] gap-3 sm:gap-8 py-6 border-b border-zinc-200 dark:border-zinc-800">
-                  <h3 class="text-xs uppercase tracking-[.18em] text-zinc-400 pt-1">{{ group.grouper }}</h3>
-                  <div class="flex flex-wrap gap-2">
-                    {% for skill in group.list %}
-                      <span class="text-sm px-3 py-1.5 rounded-full bg-white dark:bg-zinc-900 text-zinc-700 dark:text-zinc-300 border border-zinc-200 dark:border-zinc-800">{{ skill.title }}</span>
-                    {% endfor %}
-                  </div>
-                </div>
-              {% endfor %}
+          {% if skills %}
+            <div class="reveal mt-8">
+              <p class="text-xs font-medium text-zinc-500 dark:text-zinc-400 uppercase tracking-widest mb-3">Stack &amp; tools</p>
+              <div class="flex flex-wrap gap-2" role="list" aria-label="Skills">
+                {% for skill in skills %}
+                  <span role="listitem" class="text-sm bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-3.5 py-1.5 rounded-full hover:border-accent transition-colors">{{ skill.title }}</span>
+                {% endfor %}
+              </div>
             </div>
           {% endif %}
 
           {% if profile and profile.resume %}
-            <a href="{{ profile.resume.url }}" class="focus-ring inline-flex mt-9 rounded-sm text-sm font-medium text-accent nav-link" target="_blank" rel="noopener noreferrer">View résumé →</a>
+            <a href="{{ profile.resume.url }}" class="focus-ring inline-flex mt-8 rounded-sm text-sm font-medium text-accent nav-link" target="_blank" rel="noopener noreferrer">View résumé →</a>
           {% endif %}
         </div>
       </div>
