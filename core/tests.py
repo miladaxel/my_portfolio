@@ -4,7 +4,7 @@ from django.urls import reverse
 
 from accounts.models import Profile, User
 
-from .models import Project, ProjectFeature, Skill
+from .models import ContactMessage, Project, ProjectFeature, Skill
 
 
 class ProjectDetailViewTests(TestCase):
@@ -112,6 +112,7 @@ class CoreAdminTests(TestCase):
             reverse("admin:core_skill_changelist"),
             reverse("admin:core_projectfeature_changelist"),
             reverse("admin:core_projectimage_changelist"),
+            reverse("admin:core_contactmessage_changelist"),
         )
 
         for url in urls:
@@ -126,3 +127,92 @@ class CoreAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "features-TOTAL_FORMS")
         self.assertContains(response, "images-TOTAL_FORMS")
+
+
+class ContactMessageApiTests(TestCase):
+    def setUp(self):
+        self.url = reverse("core:contact_message_create")
+
+    def test_json_message_is_saved(self):
+        response = self.client.post(
+            self.url,
+            data={
+                "name": "Sara Ahmadi",
+                "email": "sara@example.com",
+                "telegram_id": "@sara_dev",
+                "phone": "",
+                "subject": "New project",
+                "message": "I would like to discuss a Django project.",
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertTrue(response.json()["success"])
+        saved_message = ContactMessage.objects.get()
+        self.assertEqual(saved_message.name, "Sara Ahmadi")
+        self.assertEqual(saved_message.email, "sara@example.com")
+        self.assertFalse(saved_message.is_read)
+
+    def test_form_encoded_message_is_saved(self):
+        response = self.client.post(
+            self.url,
+            data={
+                "name": "Ali",
+                "phone": "+98 912 123 4567",
+                "subject": "Hello",
+                "message": "Please contact me.",
+            },
+        )
+
+        self.assertEqual(response.status_code, 201)
+        self.assertEqual(ContactMessage.objects.get().phone, "+98 912 123 4567")
+
+    def test_at_least_one_contact_method_is_required(self):
+        response = self.client.post(
+            self.url,
+            data={
+                "name": "No Contact",
+                "subject": "Hello",
+                "message": "There is no way to reply to me.",
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("__all__", response.json()["errors"])
+        self.assertEqual(len(response.json()["errors"]["__all__"]), 1)
+        self.assertFalse(ContactMessage.objects.exists())
+
+    def test_invalid_contact_values_are_rejected(self):
+        response = self.client.post(
+            self.url,
+            data={
+                "name": "Invalid Contact",
+                "email": "not-an-email",
+                "telegram_id": "bad id",
+                "subject": "Hello",
+                "message": "Invalid contact fields.",
+            },
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("email", response.json()["errors"])
+        self.assertIn("telegram_id", response.json()["errors"])
+
+    def test_invalid_json_is_rejected(self):
+        response = self.client.post(
+            self.url,
+            data="{not-json",
+            content_type="application/json",
+        )
+
+        self.assertEqual(response.status_code, 400)
+        self.assertIn("error", response.json())
+
+    def test_get_is_not_allowed(self):
+        response = self.client.get(self.url)
+
+        self.assertEqual(response.status_code, 405)
+        self.assertEqual(response.headers["Allow"], "POST")

@@ -1,8 +1,8 @@
 from django.contrib import admin
 from django.db.models import Count
-from django.utils.html import format_html
+from django.utils.html import format_html, format_html_join
 
-from .models import Project, ProjectFeature, ProjectImage, Skill
+from .models import ContactMessage, Project, ProjectFeature, ProjectImage, Skill
 
 
 def image_preview(image, *, width=72):
@@ -157,6 +157,62 @@ class ProjectImageAdmin(admin.ModelAdmin):
     @admin.display(description="پیش‌نمایش")
     def image_preview(self, obj):
         return image_preview(obj.image)
+
+
+@admin.register(ContactMessage)
+class ContactMessageAdmin(admin.ModelAdmin):
+    list_display = ("name", "subject", "contact_method", "created_at", "is_read")
+    list_display_links = ("name", "subject")
+    list_editable = ("is_read",)
+    list_filter = ("is_read", "created_at")
+    search_fields = (
+        "name",
+        "email",
+        "telegram_id",
+        "phone",
+        "subject",
+        "message",
+    )
+    readonly_fields = (
+        "name",
+        "email",
+        "telegram_id",
+        "phone",
+        "subject",
+        "message",
+        "created_at",
+    )
+    fields = (
+        "name",
+        "email",
+        "telegram_id",
+        "phone",
+        "subject",
+        "message",
+        "created_at",
+        "is_read",
+    )
+    date_hierarchy = "created_at"
+    ordering = ("-created_at",)
+    actions = ("mark_as_read", "mark_as_unread")
+
+    @admin.display(description="راه ارتباطی")
+    def contact_method(self, obj):
+        methods = (
+            ("Email", obj.email),
+            ("Telegram", obj.telegram_id),
+            ("Phone", obj.phone),
+        )
+        available_methods = ((label, value) for label, value in methods if value)
+        return format_html_join(", ", "<span>{}: {}</span>", available_methods) or "—"
+
+    @admin.action(description="علامت‌گذاری پیام‌های انتخاب‌شده به‌عنوان خوانده‌شده")
+    def mark_as_read(self, request, queryset):
+        queryset.update(is_read=True)
+
+    @admin.action(description="علامت‌گذاری پیام‌های انتخاب‌شده به‌عنوان خوانده‌نشده")
+    def mark_as_unread(self, request, queryset):
+        queryset.update(is_read=False)
 
 
 admin.site.site_header = "مدیریت پورتفولیو"
