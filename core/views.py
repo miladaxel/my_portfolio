@@ -38,7 +38,7 @@ def home(request):
             "featured_projects": featured_projects,
             "latest_project": featured_projects[0] if featured_projects else None,
             "project_count": Project.objects.count(),
-            "skills": Skill.objects.order_by("category", "title"),
+            "skills": Skill.objects.order_by("display_order", "category", 'title'),
             "skill_count": Skill.objects.count(),
         },
     )

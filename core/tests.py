@@ -75,6 +75,7 @@ class HomeViewTests(TestCase):
         self.assertContains(response, 'id="skills"')
         self.assertContains(response, "Backend")
         self.assertNotContains(response, "Stack &amp; tools")
+        self.assertContains(response, 'href="#contact"')
         self.assertContains(response, "owner@example.com")
 
     def test_home_groups_skills_by_category_and_renders_icons(self):

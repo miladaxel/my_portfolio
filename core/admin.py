@@ -44,7 +44,7 @@ class SkillAdmin(admin.ModelAdmin):
     search_fields = ("title", "category")
     ordering = ("category", "title")
     readonly_fields = ("icon_preview",)
-    fields = ("title", "category", "icon", "icon_preview")
+    fields = ("title", "category",'display_order' ,"icon", "icon_preview")
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(_project_count=Count("projects", distinct=True))
