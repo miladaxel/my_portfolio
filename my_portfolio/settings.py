@@ -40,6 +40,8 @@ if ENVIRONMENT not in {"development", "production"}:
     )
 
 IS_PRODUCTION = ENVIRONMENT == "production"
+RENDER_EXTERNAL_HOSTNAME = os.getenv("RENDER_EXTERNAL_HOSTNAME", "").strip()
+RENDER_EXTERNAL_URL = os.getenv("RENDER_EXTERNAL_URL", "").strip()
 
 SECRET_KEY = os.getenv("DJANGO_SECRET_KEY", "")
 if IS_PRODUCTION and not SECRET_KEY:
@@ -53,12 +55,22 @@ DEBUG = False if IS_PRODUCTION else env_bool("DJANGO_DEBUG", default=True)
 
 ALLOWED_HOSTS = env_list(
     "DJANGO_ALLOWED_HOSTS",
-    default="localhost,127.0.0.1,[::1]" if not IS_PRODUCTION else "",
+    default=(
+        RENDER_EXTERNAL_HOSTNAME
+        if IS_PRODUCTION
+        else "localhost,127.0.0.1,[::1]"
+    ),
 )
 if IS_PRODUCTION and not ALLOWED_HOSTS:
-    raise ImproperlyConfigured("DJANGO_ALLOWED_HOSTS is required in production.")
+    raise ImproperlyConfigured(
+        "DJANGO_ALLOWED_HOSTS is required outside Render production, or "
+        "RENDER_EXTERNAL_HOSTNAME must be provided automatically by Render."
+    )
 
-CSRF_TRUSTED_ORIGINS = env_list("DJANGO_CSRF_TRUSTED_ORIGINS")
+CSRF_TRUSTED_ORIGINS = env_list(
+    "DJANGO_CSRF_TRUSTED_ORIGINS",
+    default=RENDER_EXTERNAL_URL if IS_PRODUCTION else "",
+)
 
 
 INSTALLED_APPS = [
@@ -68,6 +80,9 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    "cloudinary_storage",
+    "cloudinary",
+
     "core.apps.CoreConfig",
     "accounts.apps.AccountsConfig",
 ]
@@ -104,13 +119,22 @@ WSGI_APPLICATION = "my_portfolio.wsgi.application"
 ASGI_APPLICATION = "my_portfolio.asgi.application"
 
 
+DATABASE_URL = os.getenv("DATABASE_URL", "").strip()
+if IS_PRODUCTION and not DATABASE_URL:
+    raise ImproperlyConfigured("DATABASE_URL is required in production.")
+
 DATABASES = {
     "default": dj_database_url.config(
-        default=f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
+        default=DATABASE_URL or f"sqlite:///{BASE_DIR / 'db.sqlite3'}",
         conn_max_age=60 if IS_PRODUCTION else 0,
         conn_health_checks=IS_PRODUCTION,
     )
 }
+
+if IS_PRODUCTION and DATABASES["default"]["ENGINE"] != "django.db.backends.postgresql":
+    raise ImproperlyConfigured(
+        "DATABASE_URL must point to PostgreSQL in production."
+    )
 
 
 AUTH_PASSWORD_VALIDATORS = [
@@ -140,9 +164,41 @@ USE_TZ = True
 STATIC_URL = "/static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+CLOUDINARY_CREDENTIALS = {
+    "CLOUD_NAME": os.getenv("CLOUDINARY_CLOUD_NAME", "").strip(),
+    "API_KEY": os.getenv("CLOUDINARY_API_KEY", "").strip(),
+    "API_SECRET": os.getenv("CLOUDINARY_API_SECRET", "").strip(),
+}
+
+if IS_PRODUCTION:
+    missing_cloudinary_credentials = [
+        name for name, value in CLOUDINARY_CREDENTIALS.items() if not value
+    ]
+    if missing_cloudinary_credentials:
+        missing_names = ", ".join(
+            f"CLOUDINARY_{name}" for name in missing_cloudinary_credentials
+        )
+        raise ImproperlyConfigured(
+            f"The following Cloudinary environment variables are required in "
+            f"production: {missing_names}."
+        )
+
+CLOUDINARY_STORAGE = CLOUDINARY_CREDENTIALS
+
 STORAGES = {
     "default": {
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
+        "BACKEND": (
+            "cloudinary_storage.storage.MediaCloudinaryStorage"
+            if IS_PRODUCTION
+            else "django.core.files.storage.FileSystemStorage"
+        ),
+    },
+    "raw_media": {
+        "BACKEND": (
+            "cloudinary_storage.storage.RawMediaCloudinaryStorage"
+            if IS_PRODUCTION
+            else "django.core.files.storage.FileSystemStorage"
+        ),
     },
     "staticfiles": {
         "BACKEND": (

@@ -1,10 +1,43 @@
+from django.conf import settings
 from django.contrib.auth import get_user_model
-from django.test import TestCase
+from django.test import SimpleTestCase, TestCase
 from django.urls import reverse
 
 from accounts.models import Profile, User
 
 from .models import ContactMessage, Project, ProjectFeature, Skill
+
+
+class StorageConfigurationTests(SimpleTestCase):
+    def test_default_storage_matches_environment(self):
+        expected_backend = (
+            "cloudinary_storage.storage.MediaCloudinaryStorage"
+            if settings.IS_PRODUCTION
+            else "django.core.files.storage.FileSystemStorage"
+        )
+
+        self.assertEqual(
+            settings.STORAGES["default"]["BACKEND"],
+            expected_backend,
+        )
+
+    def test_static_files_do_not_use_cloudinary(self):
+        self.assertNotIn(
+            "cloudinary",
+            settings.STORAGES["staticfiles"]["BACKEND"].lower(),
+        )
+
+    def test_resume_storage_matches_environment(self):
+        expected_backend = (
+            "cloudinary_storage.storage.RawMediaCloudinaryStorage"
+            if settings.IS_PRODUCTION
+            else "django.core.files.storage.FileSystemStorage"
+        )
+
+        self.assertEqual(
+            settings.STORAGES["raw_media"]["BACKEND"],
+            expected_backend,
+        )
 
 
 class ProjectDetailViewTests(TestCase):

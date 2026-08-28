@@ -24,13 +24,17 @@ Set the values from `.env.production.example` in the hosting provider's secret o
 environment-variable panel. At minimum, replace these values:
 
 - `DJANGO_SECRET_KEY`: a unique, random secret that is never committed
-- `DJANGO_ALLOWED_HOSTS`: comma-separated hostnames without `https://`
-- `DJANGO_CSRF_TRUSTED_ORIGINS`: comma-separated full HTTPS origins
+- `DJANGO_ALLOWED_HOSTS`: optional on Render because its generated hostname is
+  detected automatically; set comma-separated hostnames for custom domains
+- `DJANGO_CSRF_TRUSTED_ORIGINS`: optional on Render for the generated URL; set
+  comma-separated full HTTPS origins for custom domains
 - `DATABASE_URL`: a persistent PostgreSQL connection URL
+- `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and
+  `CLOUDINARY_API_SECRET`: credentials for production media storage
 
 Production always disables `DEBUG`, enables secure cookies and HTTPS redirect,
 uses PostgreSQL through `DATABASE_URL`, serves collected static assets with
-WhiteNoise, and runs behind Gunicorn.
+WhiteNoise, stores uploaded media in Cloudinary, and runs behind Gunicorn.
 
 The initial HSTS duration is one hour. Increase it gradually only after HTTPS is
 working reliably; enable subdomains/preload only when every subdomain supports
@@ -53,9 +57,8 @@ docker build -t my-portfolio .
 docker run --env-file .env.production -p 8000:8000 my-portfolio
 ```
 
-Do not store production uploads only inside an ephemeral container. Mount a
-persistent volume at `DJANGO_MEDIA_ROOT` or configure an object-storage backend
-before relying on admin-uploaded images and resume files.
+Development stores uploads under the local `media/` directory. Production uses
+Cloudinary for uploaded media, so no persistent Render disk is required.
 
 ## Environment behavior
 
@@ -64,5 +67,5 @@ before relying on admin-uploaded images and resume files.
 | Debug pages | Enabled by default | Always disabled |
 | Database | Local SQLite | `DATABASE_URL` (PostgreSQL recommended) |
 | Static files | Django development server | WhiteNoise + `collectstatic` |
-| Uploaded media | Served locally by Django | Persistent volume/object storage required |
+| Uploaded media | Local `media/` directory | Cloudinary |
 | HTTPS security | Off | Secure cookies and redirect enabled |

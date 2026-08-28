@@ -151,6 +151,3 @@ temp/
 
 /folio-tailwind-1.0.0/folio-tailwind-1.0.0/README.md
 /folio-tailwind-1.0.0/folio-tailwind-1.0.0/.github/workflows/release.yml
-/.env.example
-/.env.production.example
-/.python-version
