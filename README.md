@@ -31,6 +31,8 @@ environment-variable panel. At minimum, replace these values:
 - `DATABASE_URL`: a persistent PostgreSQL connection URL
 - `CLOUDINARY_CLOUD_NAME`, `CLOUDINARY_API_KEY`, and
   `CLOUDINARY_API_SECRET`: credentials for production media storage
+- `DJANGO_SUPERUSER_USERNAME`, `DJANGO_SUPERUSER_EMAIL`, and
+  `DJANGO_SUPERUSER_PASSWORD`: credentials used to create the initial admin
 
 Production always disables `DEBUG`, enables secure cookies and HTTPS redirect,
 uses PostgreSQL through `DATABASE_URL`, serves collected static assets with
@@ -46,6 +48,7 @@ Build/release commands for a conventional Python host are:
 python -m pip install -r requirements.txt
 python manage.py collectstatic --noinput
 python manage.py migrate --noinput
+python manage.py ensure_superuser
 gunicorn my_portfolio.wsgi:application --bind 0.0.0.0:$PORT
 ```
 
