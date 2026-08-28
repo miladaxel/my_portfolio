@@ -72,7 +72,28 @@ class HomeViewTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "Featured build")
         self.assertContains(response, "Python")
+        self.assertContains(response, 'id="skills"')
+        self.assertContains(response, "Backend")
+        self.assertNotContains(response, "Stack &amp; tools")
         self.assertContains(response, "owner@example.com")
+
+    def test_home_groups_skills_by_category_and_renders_icons(self):
+        Skill.objects.create(
+            title="PostgreSQL",
+            category="Database",
+            icon="icons/postgresql.png",
+        )
+
+        response = self.client.get(reverse("core:home"))
+        content = response.content.decode()
+
+        self.assertContains(response, "Database")
+        self.assertContains(response, "PostgreSQL")
+        self.assertContains(response, 'src="/media/icons/postgresql.png"')
+        self.assertLess(
+            content.index(">Backend</h3>"),
+            content.index(">Database</h3>"),
+        )
 
     def test_home_uses_profile_content_when_available(self):
         Profile.objects.create(
@@ -87,6 +108,24 @@ class HomeViewTests(TestCase):
         self.assertContains(response, "Short profile introduction.")
         self.assertContains(response, "Long profile biography.")
         self.assertContains(response, "https://github.com/example")
+
+    def test_home_contact_form_posts_to_contact_message_api(self):
+        response = self.client.get(reverse("core:home"))
+
+        self.assertContains(
+            response,
+            f'action="{reverse("core:contact_message_create")}"',
+        )
+        for field_name in (
+            "name",
+            "email",
+            "telegram_id",
+            "phone",
+            "subject",
+            "message",
+        ):
+            with self.subTest(field_name=field_name):
+                self.assertContains(response, f'name="{field_name}"')
 from django.urls import reverse
 
 from .models import Project

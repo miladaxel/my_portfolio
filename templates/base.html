@@ -104,6 +104,7 @@
 
       <ul class="hidden md:flex items-center gap-8 text-sm" role="list">
         <li><a href="{% url 'core:home' %}#services" :class="{ '!text-accent font-medium': activeSection === 'services' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'services' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Services</a></li>
+        <li><a href="{% url 'core:home' %}#skills" :class="{ '!text-accent font-medium': activeSection === 'skills' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'skills' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Skills</a></li>
         <li><a href="{% url 'core:home' %}#work" :class="{ '!text-accent font-medium': activeSection === 'work' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'work' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Work</a></li>
         <li><a href="{% url 'core:home' %}#about" :class="{ '!text-accent font-medium': activeSection === 'about' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'about' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">About</a></li>
         <li><a href="{% url 'core:home' %}#contact" :class="{ '!text-accent font-medium': activeSection === 'contact' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'contact' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Contact</a></li>
@@ -131,6 +132,7 @@
          class="md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
       <ul class="px-6 py-5 flex flex-col gap-4 text-sm font-medium" role="list">
         <li><a href="{% url 'core:home' %}#services" :class="{ 'text-accent': activeSection === 'services' }" class="block {% if active_nav == 'services' %}text-accent{% endif %}" @click="mobileMenu = false">Services</a></li>
+        <li><a href="{% url 'core:home' %}#skills" :class="{ 'text-accent': activeSection === 'skills' }" class="block {% if active_nav == 'skills' %}text-accent{% endif %}" @click="mobileMenu = false">Skills</a></li>
         <li><a href="{% url 'core:home' %}#work" :class="{ 'text-accent': activeSection === 'work' }" class="block {% if active_nav == 'work' %}text-accent{% endif %}" @click="mobileMenu = false">Work</a></li>
         <li><a href="{% url 'core:home' %}#about" :class="{ 'text-accent': activeSection === 'about' }" class="block {% if active_nav == 'about' %}text-accent{% endif %}" @click="mobileMenu = false">About</a></li>
         <li><a href="{% url 'core:home' %}#contact" :class="{ 'text-accent': activeSection === 'contact' }" class="block {% if active_nav == 'contact' %}text-accent{% endif %}" @click="mobileMenu = false">Contact</a></li>
@@ -191,7 +193,7 @@
         },
 
         updateActiveSection() {
-          const sectionIds = ['contact', 'about', 'work', 'services', 'hero'];
+          const sectionIds = ['contact', 'about', 'work', 'skills', 'services', 'hero'];
           const atBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 60;
           if (atBottom && document.getElementById('contact')) {
             this.activeSection = 'contact';

@@ -8,7 +8,10 @@ class Skill(models.Model):
     title = models.CharField(max_length=100, unique=True)
     category = models.CharField(max_length=100)
     icon = models.ImageField(upload_to='icons/', blank=True, null=True)
+    display_order = models.PositiveIntegerField(default=0)
 
+    class Meta:
+        ordering = ['display_order', 'title']
 
 
     def __str__(self):
