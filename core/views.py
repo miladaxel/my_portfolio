@@ -1,12 +1,40 @@
 import json
 
 from django.http import JsonResponse
-from django.shortcuts import get_object_or_404, render
+from django.shortcuts import get_object_or_404, redirect, render
+from django.urls import reverse
+from django.utils.http import url_has_allowed_host_and_scheme
+from django.views.decorators.http import require_POST
 
 from accounts.models import Profile, User
 
 from .forms import ContactMessageForm
+from .language import (
+    DEFAULT_SITE_LANGUAGE,
+    SITE_LANGUAGE_SESSION_KEY,
+    SUPPORTED_SITE_LANGUAGES,
+    get_site_language,
+)
 from .models import Project, Skill
+
+
+@require_POST
+def set_site_language(request):
+    language = request.POST.get("language", DEFAULT_SITE_LANGUAGE)
+    if language not in SUPPORTED_SITE_LANGUAGES:
+        language = DEFAULT_SITE_LANGUAGE
+
+    request.session[SITE_LANGUAGE_SESSION_KEY] = language
+
+    next_url = request.POST.get("next", "")
+    if not url_has_allowed_host_and_scheme(
+        next_url,
+        allowed_hosts={request.get_host()},
+        require_https=request.is_secure(),
+    ):
+        next_url = reverse("core:home")
+
+    return redirect(next_url)
 
 
 def home(request):
@@ -67,9 +95,17 @@ def project_detail(request, slug):
 
 
 def create_contact_message(request):
+    is_farsi = get_site_language(request) == "fa"
     if request.method != "POST":
         response = JsonResponse(
-            {"success": False, "error": "Only POST requests are allowed."},
+            {
+                "success": False,
+                "error": (
+                    "فقط درخواست POST مجاز است."
+                    if is_farsi
+                    else "Only POST requests are allowed."
+                ),
+            },
             status=405,
         )
         response["Allow"] = "POST"
@@ -80,12 +116,26 @@ def create_contact_message(request):
             data = json.loads(request.body or b"{}")
         except (json.JSONDecodeError, UnicodeDecodeError):
             return JsonResponse(
-                {"success": False, "error": "The request body is not valid JSON."},
+                {
+                    "success": False,
+                    "error": (
+                        "بدنهٔ درخواست JSON معتبر نیست."
+                        if is_farsi
+                        else "The request body is not valid JSON."
+                    ),
+                },
                 status=400,
             )
         if not isinstance(data, dict):
             return JsonResponse(
-                {"success": False, "error": "The JSON body must be an object."},
+                {
+                    "success": False,
+                    "error": (
+                        "بدنهٔ JSON باید یک شیء باشد."
+                        if is_farsi
+                        else "The JSON body must be an object."
+                    ),
+                },
                 status=400,
             )
     else:
@@ -108,7 +158,11 @@ def create_contact_message(request):
     return JsonResponse(
         {
             "success": True,
-            "message": "Your message has been received.",
+            "message": (
+                "پیام شما دریافت شد."
+                if is_farsi
+                else "Your message has been received."
+            ),
             "id": contact_message.pk,
         },
         status=201,

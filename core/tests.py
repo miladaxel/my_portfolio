@@ -44,9 +44,12 @@ class ProjectDetailViewTests(TestCase):
     def setUp(self):
         self.project = Project.objects.create(
             title="Portfolio platform",
+            fa_title="پلتفرم پورتفولیو",
             slug="portfolio-platform",
             short_description="A focused project summary.",
+            fa_short_description="خلاصهٔ فارسی پروژه.",
             description="A complete project overview.",
+            fa_description="معرفی کامل فارسی پروژه.",
             status=Project.Status.COMPLETED,
             is_featured=True,
             github_link="https://github.com/example/portfolio-platform",
@@ -80,6 +83,52 @@ class ProjectDetailViewTests(TestCase):
 
         self.assertEqual(response.status_code, 404)
 
+    def test_project_detail_uses_persian_model_fields_in_farsi(self):
+        session = self.client.session
+        session["site_language"] = "fa"
+        session.save()
+
+        response = self.client.get(
+            reverse("core:project_detail", kwargs={"slug": self.project.slug})
+        )
+
+        self.assertContains(response, self.project.fa_title)
+        self.assertContains(response, self.project.fa_short_description)
+        self.assertContains(response, self.project.fa_description)
+        self.assertContains(response, 'lang="fa"')
+        self.assertContains(response, 'dir="rtl"')
+
+
+class SiteLanguageViewTests(TestCase):
+    def test_language_choice_is_saved_and_redirects_back(self):
+        response = self.client.post(
+            reverse("core:set_site_language"),
+            {"language": "fa", "next": reverse("core:home") + "#work"},
+        )
+
+        self.assertRedirects(response, reverse("core:home") + "#work")
+        self.assertEqual(self.client.session["site_language"], "fa")
+
+        page = self.client.get(reverse("core:home"))
+        self.assertContains(page, 'lang="fa"')
+        self.assertContains(page, 'dir="rtl"')
+
+    def test_invalid_language_falls_back_to_english(self):
+        self.client.post(
+            reverse("core:set_site_language"),
+            {"language": "unknown", "next": reverse("core:home")},
+        )
+
+        self.assertEqual(self.client.session["site_language"], "en")
+
+    def test_external_redirect_is_rejected(self):
+        response = self.client.post(
+            reverse("core:set_site_language"),
+            {"language": "fa", "next": "https://example.com/phishing"},
+        )
+
+        self.assertRedirects(response, reverse("core:home"))
+
 
 class HomeViewTests(TestCase):
     def setUp(self):
@@ -92,8 +141,10 @@ class HomeViewTests(TestCase):
         )
         self.project = Project.objects.create(
             title="Featured build",
+            fa_title="پروژهٔ منتخب",
             slug="featured-build",
             short_description="A featured portfolio project.",
+            fa_short_description="یک پروژهٔ منتخب برای پورتفولیو.",
             is_featured=True,
         )
         self.skill = Skill.objects.create(title="Python", category="Backend")
@@ -160,6 +211,18 @@ class HomeViewTests(TestCase):
         ):
             with self.subTest(field_name=field_name):
                 self.assertContains(response, f'name="{field_name}"')
+
+    def test_home_uses_persian_project_fields_in_farsi(self):
+        session = self.client.session
+        session["site_language"] = "fa"
+        session.save()
+
+        response = self.client.get(reverse("core:home"))
+
+        self.assertContains(response, self.project.fa_title)
+        self.assertContains(response, self.project.fa_short_description)
+        self.assertContains(response, "پروژه‌های منتخب")
+        self.assertContains(response, "مشاهده پروژه")
 from django.urls import reverse
 
 from .models import Project
@@ -200,6 +263,9 @@ class CoreAdminTests(TestCase):
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "features-TOTAL_FORMS")
         self.assertContains(response, "images-TOTAL_FORMS")
+        self.assertContains(response, 'name="fa_title"')
+        self.assertContains(response, 'name="fa_short_description"')
+        self.assertContains(response, 'name="fa_description"')
 
 
 class ContactMessageApiTests(TestCase):

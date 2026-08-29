@@ -1,20 +1,20 @@
 {% load static %}
 <!DOCTYPE html>
-<html lang="{% block html_lang %}en{% endblock %}" x-data="siteShell()" :class="{ 'dark': dark }" class="scroll-smooth">
+<html lang="{{ site_language }}" dir="{{ text_direction }}" x-data="siteShell()" :class="{ 'dark': dark }" class="scroll-smooth">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="description" content="{% block meta_description %}A curated portfolio of design and development work.{% endblock %}">
-  <meta property="og:title" content="{% block og_title %}Portfolio{% endblock %}">
-  <meta property="og:description" content="{% block og_description %}Selected projects, process, and technical work.{% endblock %}">
+  <meta name="description" content="{% block meta_description %}{% if is_farsi %}مجموعه‌ای منتخب از پروژه‌های طراحی و توسعهٔ وب.{% else %}A curated portfolio of design and development work.{% endif %}{% endblock %}">
+  <meta property="og:title" content="{% block og_title %}{% if is_farsi %}پورتفولیو{% else %}Portfolio{% endif %}{% endblock %}">
+  <meta property="og:description" content="{% block og_description %}{% if is_farsi %}پروژه‌های منتخب، روند کار و تجربه‌های فنی.{% else %}Selected projects, process, and technical work.{% endif %}{% endblock %}">
   <meta property="og:type" content="{% block og_type %}website{% endblock %}">
-  <title>{% block title %}Portfolio{% endblock %}</title>
+  <title>{% block title %}{% if is_farsi %}پورتفولیو{% else %}Portfolio{% endif %}{% endblock %}</title>
 
   <script src="https://cdn.tailwindcss.com"></script>
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=PT+Sans:ital,wght@0,400;0,700;1,400&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600&family=Vazirmatn:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
 
   <script>
     tailwind.config = {
@@ -38,6 +38,15 @@
     *, *::before, *::after { box-sizing: border-box; }
     html, body { font-family: 'DM Sans', sans-serif; }
     h1, h2, h3, h4 { font-family: 'PT Sans', sans-serif; }
+    html[dir="rtl"] body,
+    html[dir="rtl"] h1,
+    html[dir="rtl"] h2,
+    html[dir="rtl"] h3,
+    html[dir="rtl"] h4 { font-family: 'Vazirmatn', sans-serif; }
+    html[dir="rtl"] body { letter-spacing: 0; }
+    html[dir="rtl"] .tracking-widest,
+    html[dir="rtl"] [class*="tracking-"] { letter-spacing: 0; }
+    .ltr-content { direction: ltr; unicode-bidi: isolate; }
     body { transition: background-color .3s ease, color .3s ease; }
     body::before {
       content: '';
@@ -55,7 +64,7 @@
     .progress-line {
       position: fixed;
       top: 0;
-      left: 0;
+      inset-inline-start: 0;
       z-index: 80;
       height: 3px;
       background: #FF6B2B;
@@ -65,7 +74,7 @@
     .nav-link::after {
       content: '';
       position: absolute;
-      left: 0;
+      inset-inline-start: 0;
       bottom: -3px;
       width: 0;
       height: 1.5px;
@@ -97,29 +106,39 @@
 
   <header class="fixed inset-x-0 top-0 z-50 transition-all duration-300"
           :class="scrolled ? 'bg-white/90 dark:bg-zinc-950/90 backdrop-blur-md shadow-sm shadow-black/5' : 'bg-transparent'">
-    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="Main navigation">
-      <a href="{% url 'core:home' %}#hero" class="focus-ring font-display font-bold text-xl tracking-tight rounded-sm" aria-label="Back to portfolio home">
+    <nav class="max-w-6xl mx-auto px-6 h-16 flex items-center justify-between" aria-label="{% if is_farsi %}ناوبری اصلی{% else %}Main navigation{% endif %}">
+      <a href="{% url 'core:home' %}#hero" class="focus-ring font-display font-bold text-xl tracking-tight rounded-sm ltr-content" aria-label="{% if is_farsi %}بازگشت به صفحهٔ اصلی پورتفولیو{% else %}Back to portfolio home{% endif %}">
         <span class="text-zinc-900 dark:text-white">port</span><span class="text-accent">folio</span>
       </a>
 
       <ul class="hidden md:flex items-center gap-8 text-sm" role="list">
-        <li><a href="{% url 'core:home' %}#services" :class="{ '!text-accent font-medium': activeSection === 'services' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'services' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Services</a></li>
-        <li><a href="{% url 'core:home' %}#skills" :class="{ '!text-accent font-medium': activeSection === 'skills' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'skills' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Skills</a></li>
-        <li><a href="{% url 'core:home' %}#work" :class="{ '!text-accent font-medium': activeSection === 'work' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'work' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Work</a></li>
-        <li><a href="{% url 'core:home' %}#about" :class="{ '!text-accent font-medium': activeSection === 'about' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'about' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">About</a></li>
-        <li><a href="{% url 'core:home' %}#contact" :class="{ '!text-accent font-medium': activeSection === 'contact' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'contact' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">Contact</a></li>
+        <li><a href="{% url 'core:home' %}#services" :class="{ '!text-accent font-medium': activeSection === 'services' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'services' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">{% if is_farsi %}خدمات{% else %}Services{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#skills" :class="{ '!text-accent font-medium': activeSection === 'skills' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'skills' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">{% if is_farsi %}مهارت‌ها{% else %}Skills{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#work" :class="{ '!text-accent font-medium': activeSection === 'work' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'work' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">{% if is_farsi %}پروژه‌ها{% else %}Work{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#about" :class="{ '!text-accent font-medium': activeSection === 'about' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'about' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">{% if is_farsi %}دربارهٔ من{% else %}About{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#contact" :class="{ '!text-accent font-medium': activeSection === 'contact' }" class="nav-link focus-ring rounded-sm transition-colors {% if active_nav == 'contact' %}text-accent font-medium{% else %}text-zinc-500 dark:text-zinc-400 hover:text-zinc-900 dark:hover:text-white{% endif %}">{% if is_farsi %}تماس{% else %}Contact{% endif %}</a></li>
       </ul>
 
       <div class="flex items-center gap-3">
+        <form method="post" action="{% url 'core:set_site_language' %}" @submit="$refs.languageNext.value = window.location.pathname + window.location.search + window.location.hash">
+          {% csrf_token %}
+          <input x-ref="languageNext" type="hidden" name="next" value="{{ request.get_full_path }}">
+          <input type="hidden" name="language" value="{% if is_farsi %}en{% else %}fa{% endif %}">
+          <button type="submit"
+                  class="focus-ring h-9 min-w-9 rounded-full border border-zinc-200 dark:border-zinc-800 px-3 flex items-center justify-center text-xs font-bold hover:border-accent hover:text-accent transition-colors ltr-content"
+                  aria-label="{% if is_farsi %}نمایش سایت به زبان انگلیسی{% else %}View site in Persian{% endif %}">
+            {% if is_farsi %}EN{% else %}فا{% endif %}
+          </button>
+        </form>
         <button type="button" @click="dark = !dark"
                 class="focus-ring w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-sm hover:bg-zinc-100 dark:hover:bg-zinc-900 transition-colors"
-                :aria-label="dark ? 'Use light theme' : 'Use dark theme'">
+                :aria-label="dark ? '{% if is_farsi %}استفاده از پوستهٔ روشن{% else %}Use light theme{% endif %}' : '{% if is_farsi %}استفاده از پوستهٔ تیره{% else %}Use dark theme{% endif %}'">
           <span x-show="!dark" aria-hidden="true">◐</span>
           <span x-show="dark" aria-hidden="true">◑</span>
         </button>
         <button type="button" @click="mobileMenu = !mobileMenu"
                 class="focus-ring md:hidden w-9 h-9 rounded-full border border-zinc-200 dark:border-zinc-800 flex items-center justify-center text-lg"
-                :aria-expanded="mobileMenu" aria-controls="mobile-menu" aria-label="Toggle navigation">
+                :aria-expanded="mobileMenu" aria-controls="mobile-menu" aria-label="{% if is_farsi %}باز و بسته کردن منو{% else %}Toggle navigation{% endif %}">
           <span x-text="mobileMenu ? '×' : '≡'" aria-hidden="true"></span>
         </button>
       </div>
@@ -131,11 +150,11 @@
          x-transition:enter-end="opacity-100 translate-y-0"
          class="md:hidden bg-white dark:bg-zinc-950 border-t border-zinc-100 dark:border-zinc-900">
       <ul class="px-6 py-5 flex flex-col gap-4 text-sm font-medium" role="list">
-        <li><a href="{% url 'core:home' %}#services" :class="{ 'text-accent': activeSection === 'services' }" class="block {% if active_nav == 'services' %}text-accent{% endif %}" @click="mobileMenu = false">Services</a></li>
-        <li><a href="{% url 'core:home' %}#skills" :class="{ 'text-accent': activeSection === 'skills' }" class="block {% if active_nav == 'skills' %}text-accent{% endif %}" @click="mobileMenu = false">Skills</a></li>
-        <li><a href="{% url 'core:home' %}#work" :class="{ 'text-accent': activeSection === 'work' }" class="block {% if active_nav == 'work' %}text-accent{% endif %}" @click="mobileMenu = false">Work</a></li>
-        <li><a href="{% url 'core:home' %}#about" :class="{ 'text-accent': activeSection === 'about' }" class="block {% if active_nav == 'about' %}text-accent{% endif %}" @click="mobileMenu = false">About</a></li>
-        <li><a href="{% url 'core:home' %}#contact" :class="{ 'text-accent': activeSection === 'contact' }" class="block {% if active_nav == 'contact' %}text-accent{% endif %}" @click="mobileMenu = false">Contact</a></li>
+        <li><a href="{% url 'core:home' %}#services" :class="{ 'text-accent': activeSection === 'services' }" class="block {% if active_nav == 'services' %}text-accent{% endif %}" @click="mobileMenu = false">{% if is_farsi %}خدمات{% else %}Services{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#skills" :class="{ 'text-accent': activeSection === 'skills' }" class="block {% if active_nav == 'skills' %}text-accent{% endif %}" @click="mobileMenu = false">{% if is_farsi %}مهارت‌ها{% else %}Skills{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#work" :class="{ 'text-accent': activeSection === 'work' }" class="block {% if active_nav == 'work' %}text-accent{% endif %}" @click="mobileMenu = false">{% if is_farsi %}پروژه‌ها{% else %}Work{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#about" :class="{ 'text-accent': activeSection === 'about' }" class="block {% if active_nav == 'about' %}text-accent{% endif %}" @click="mobileMenu = false">{% if is_farsi %}دربارهٔ من{% else %}About{% endif %}</a></li>
+        <li><a href="{% url 'core:home' %}#contact" :class="{ 'text-accent': activeSection === 'contact' }" class="block {% if active_nav == 'contact' %}text-accent{% endif %}" @click="mobileMenu = false">{% if is_farsi %}تماس{% else %}Contact{% endif %}</a></li>
       </ul>
     </div>
   </header>
@@ -146,8 +165,8 @@
 
   <footer class="relative z-10 border-t border-zinc-100 dark:border-zinc-900">
     <div class="max-w-6xl mx-auto px-6 py-8 flex flex-col sm:flex-row items-center justify-between gap-4">
-      <p class="text-sm text-zinc-400">© <span x-text="year"></span> Portfolio. All rights reserved.</p>
-      <a href="#top" class="focus-ring rounded-sm text-xs text-zinc-500 hover:text-accent transition-colors">Back to top ↑</a>
+      <p class="text-sm text-zinc-400">© <span x-text="year"></span> {% if is_farsi %}پورتفولیو. همهٔ حقوق محفوظ است.{% else %}Portfolio. All rights reserved.{% endif %}</p>
+      <a href="#top" class="focus-ring rounded-sm text-xs text-zinc-500 hover:text-accent transition-colors">{% if is_farsi %}بازگشت به بالا ↑{% else %}Back to top ↑{% endif %}</a>
     </div>
   </footer>
 

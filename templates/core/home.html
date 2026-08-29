@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
-{% block title %}{{ display_name }} — Python & Django Developer{% endblock %}
-{% block meta_description %}{% if profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Portfolio of {{ display_name }}, focused on thoughtful web applications, reliable backends, and clear user experiences.{% endif %}{% endblock %}
-{% block og_title %}{{ display_name }} — Developer Portfolio{% endblock %}
-{% block og_description %}{% if profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Selected web projects, technical skills, and development work.{% endif %}{% endblock %}
+{% block title %}{% if is_farsi %}{{ display_name }} — توسعه‌دهنده پایتون و جنگو{% else %}{{ display_name }} — Python & Django Developer{% endif %}{% endblock %}
+{% block meta_description %}{% if is_farsi %}پورتفولیوی {{ display_name }}؛ متمرکز بر اپلیکیشن‌های وب خوش‌ساخت، بک‌اندهای قابل‌اعتماد و تجربه‌های کاربری روشن.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Portfolio of {{ display_name }}, focused on thoughtful web applications, reliable backends, and clear user experiences.{% endif %}{% endblock %}
+{% block og_title %}{% if is_farsi %}{{ display_name }} — پورتفولیوی توسعه‌دهنده{% else %}{{ display_name }} — Developer Portfolio{% endif %}{% endblock %}
+{% block og_description %}{% if is_farsi %}پروژه‌های منتخب وب، مهارت‌های فنی و تجربه‌های توسعه.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Selected web projects, technical skills, and development work.{% endif %}{% endblock %}
 
 {% block extra_head %}
   <style>
@@ -55,6 +55,13 @@
       display: block;
       border-radius: .65rem;
     }
+    @media (min-width: 1024px) {
+      .skill-category-heading {
+        border-inline-end: 1px solid rgb(228 228 231);
+        padding-inline-end: 2rem;
+      }
+      .dark .skill-category-heading { border-inline-end-color: rgba(255, 255, 255, .1); }
+    }
   </style>
 {% endblock %}
 
@@ -65,12 +72,14 @@
     <div class="relative z-10 max-w-7xl mx-auto px-5 sm:px-6 lg:px-8 py-16 md:py-20 w-full">
       <div class="grid md:grid-cols-[1.05fr_.95fr] gap-10 lg:gap-14 items-center">
         <div>
-          <p class="reveal text-sm lg:text-base font-medium text-accent tracking-widest uppercase mb-4">Python web developer</p>
+          <p class="reveal text-sm lg:text-base font-medium text-accent tracking-widest uppercase mb-4">{% if is_farsi %}توسعه‌دهنده وب با پایتون{% else %}Python web developer{% endif %}</p>
           <h1 class="reveal font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white mb-6 lg:mb-7">
-            Hi, I’m <span class="text-accent">Milad</span>
+            {% if is_farsi %}سلام، من <span class="text-accent">میلادم</span>{% else %}Hi, I’m <span class="text-accent">Milad</span>{% endif %}
           </h1>
           <p class="reveal text-lg md:text-xl lg:text-2xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-xl mb-9 lg:mb-10">
-            {% if profile and profile.short_bio %}
+            {% if is_farsi %}
+              توسعه‌دهندهٔ بک‌اند با تمرکز بر پایتون و جنگو هستم؛ ایده‌ها را به اپلیکیشن‌هایی قابل نگه‌داری و تجربه‌هایی دقیق و روشن تبدیل می‌کنم.
+            {% elif profile and profile.short_bio %}
               {{ profile.short_bio }}
             {% else %}
               I’m {{ display_name }}, a backend-focused developer turning ideas into maintainable Django applications and thoughtful digital experiences.
@@ -79,23 +88,23 @@
 
           <div class="reveal flex flex-wrap gap-4">
             <a href="#work" class="hero-cta focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 lg:px-8 py-3.5 lg:py-4 text-sm lg:text-base font-medium hover:bg-zinc-700 dark:hover:bg-zinc-200 transition-colors">
-              View selected work <span aria-hidden="true">↓</span>
+              {% if is_farsi %}مشاهده پروژه‌های منتخب{% else %}View selected work{% endif %} <span aria-hidden="true">↓</span>
             </a>
-            <a href="#contact" class="focus-ring inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-7 lg:px-8 py-3.5 lg:py-4 text-sm lg:text-base font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">Email me</a>
+            <a href="#contact" class="focus-ring inline-flex items-center rounded-full border border-zinc-300 dark:border-zinc-700 text-zinc-700 dark:text-zinc-300 px-7 lg:px-8 py-3.5 lg:py-4 text-sm lg:text-base font-medium hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-colors">{% if is_farsi %}پیام بدهید{% else %}Email me{% endif %}</a>
           </div>
 
           <dl class="reveal flex flex-wrap gap-x-10 lg:gap-x-14 gap-y-5 mt-12 lg:mt-14 pt-7 lg:pt-8 border-t border-zinc-100 dark:border-zinc-900">
             <div>
               <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">{{ project_count }}</dd>
-              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Projects</dt>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">{% if is_farsi %}پروژه{% else %}Projects{% endif %}</dt>
             </div>
             <div>
               <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">{{ skill_count }}</dd>
-              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Tools</dt>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">{% if is_farsi %}ابزار{% else %}Tools{% endif %}</dt>
             </div>
             <div>
-              <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">4y</dd>
-              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">Experience</dt>
+              <dd class="font-display font-bold text-3xl lg:text-4xl text-zinc-900 dark:text-white">{% if is_farsi %}۴ سال{% else %}4y{% endif %}</dd>
+              <dt class="text-xs lg:text-sm text-zinc-500 dark:text-zinc-400 mt-1">{% if is_farsi %}تجربه{% else %}Experience{% endif %}</dt>
             </div>
           </dl>
         </div>
@@ -104,14 +113,14 @@
           <div class="relative w-80 h-80 md:w-96 md:h-96 lg:w-[28rem] lg:h-[28rem]">
             {% if profile and profile.avatar %}
               <div class="hero-photo w-full h-full overflow-hidden rounded-3xl bg-zinc-300 dark:bg-zinc-800">
-                <img src="{{ profile.avatar.url }}" alt="Portrait of {{ display_name }}" width="800" height="800" loading="eager" fetchpriority="high">
+                <img src="{{ profile.avatar.url }}" alt="{% if is_farsi %}تصویر {{ display_name }}{% else %}Portrait of {{ display_name }}{% endif %}" width="800" height="800" loading="eager" fetchpriority="high">
               </div>
             {% else %}
               <div class="hero-photo w-full h-full overflow-hidden rounded-3xl bg-zinc-100 dark:bg-zinc-900 flex items-center justify-center">
                 <span class="font-display font-bold text-8xl text-zinc-300 dark:text-zinc-800">{{ display_name|first|upper }}</span>
               </div>
             {% endif %}
-            <div class="absolute -bottom-4 -left-4 bg-accent text-white font-display font-bold text-sm lg:text-base px-4 lg:px-5 py-2.5 lg:py-3 rounded-2xl shadow-lg">Open to projects</div>
+            <div class="absolute -bottom-4 -left-4 bg-accent text-white font-display font-bold text-sm lg:text-base px-4 lg:px-5 py-2.5 lg:py-3 rounded-2xl shadow-lg">{% if is_farsi %}آمادهٔ همکاری{% else %}Open to projects{% endif %}</div>
           </div>
         </div>
       </div>
@@ -121,26 +130,26 @@
   <section id="services" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
     <div class="max-w-6xl mx-auto px-6">
       <div class="max-w-2xl mb-14">
-        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">What I build</p>
-        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Useful software, end to end.</h2>
-        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">From the first data model to the interface people use, each layer is designed to stay understandable and dependable.</p>
+        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}چه چیزهایی می‌سازم{% else %}What I build{% endif %}</p>
+        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">{% if is_farsi %}نرم‌افزار کاربردی، از ابتدا تا انتها.{% else %}Useful software, end to end.{% endif %}</h2>
+        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">{% if is_farsi %}از اولین مدل داده تا رابطی که کاربر با آن کار می‌کند، هر لایه برای شفافیت، پایداری و نگه‌داری آسان طراحی می‌شود.{% else %}From the first data model to the interface people use, each layer is designed to stay understandable and dependable.{% endif %}</p>
       </div>
 
       <div class="grid md:grid-cols-3 gap-5">
         <article class="reveal bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
           <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">{ }</span>
-          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Backend systems</h3>
-          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Django applications with clear data models, reliable business logic, authentication, and maintainable admin workflows.</p>
+          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">{% if is_farsi %}سیستم‌های بک‌اند{% else %}Backend systems{% endif %}</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{% if is_farsi %}اپلیکیشن‌های جنگو با مدل دادهٔ روشن، منطق کسب‌وکار قابل‌اعتماد، احراز هویت و فرایندهای مدیریتی قابل نگه‌داری.{% else %}Django applications with clear data models, reliable business logic, authentication, and maintainable admin workflows.{% endif %}</p>
         </article>
         <article class="reveal bg-zinc-900 dark:bg-zinc-800 rounded-2xl p-8 border border-zinc-800 hover:border-accent transition-colors">
           <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">API</span>
-          <h3 class="font-display font-bold text-xl text-white mb-3">APIs & integrations</h3>
-          <p class="text-sm leading-relaxed text-zinc-400">Practical APIs and service connections built around predictable contracts, useful errors, and secure data flow.</p>
+          <h3 class="font-display font-bold text-xl text-white mb-3">{% if is_farsi %}API و یکپارچه‌سازی{% else %}APIs & integrations{% endif %}</h3>
+          <p class="text-sm leading-relaxed text-zinc-400">{% if is_farsi %}APIهای کاربردی و اتصال سرویس‌ها با قراردادهای قابل پیش‌بینی، خطاهای راهگشا و جریان امن داده.{% else %}Practical APIs and service connections built around predictable contracts, useful errors, and secure data flow.{% endif %}</p>
         </article>
         <article class="reveal bg-white dark:bg-zinc-900 rounded-2xl p-8 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
           <span class="service-mark block text-3xl text-accent mb-8" aria-hidden="true">UI</span>
-          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">Web interfaces</h3>
-          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Responsive, accessible interfaces that make complex workflows feel direct on desktop, tablet, and mobile.</p>
+          <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white mb-3">{% if is_farsi %}رابط‌های وب{% else %}Web interfaces{% endif %}</h3>
+          <p class="text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{% if is_farsi %}رابط‌های واکنش‌گرا و دسترس‌پذیر که فرایندهای پیچیده را در دسکتاپ، تبلت و موبایل ساده و مستقیم می‌کنند.{% else %}Responsive, accessible interfaces that make complex workflows feel direct on desktop, tablet, and mobile.{% endif %}</p>
         </article>
       </div>
     </div>
@@ -152,19 +161,19 @@
     <div class="relative z-10 max-w-6xl mx-auto px-6">
       <div class="grid gap-8 lg:grid-cols-[.8fr_1.2fr] lg:items-end mb-16">
         <div>
-          <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Technical toolkit</p>
-          <h2 class="reveal font-display font-bold text-4xl md:text-5xl leading-tight text-zinc-900 dark:text-white">Skills, organized<br>by discipline.</h2>
+          <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}جعبه‌ابزار فنی{% else %}Technical toolkit{% endif %}</p>
+          <h2 class="reveal font-display font-bold text-4xl md:text-5xl leading-tight text-zinc-900 dark:text-white">{% if is_farsi %}مهارت‌ها، دسته‌بندی‌شده<br>بر اساس حوزه.{% else %}Skills, organized<br>by discipline.{% endif %}</h2>
         </div>
-        <p class="reveal max-w-xl text-zinc-600 leading-relaxed dark:text-zinc-400 lg:justify-self-end">A practical view of the technologies I use—grouped by where they contribute to a product, from its foundation to the experience around it.</p>
+        <p class="reveal max-w-xl text-zinc-600 leading-relaxed dark:text-zinc-400 lg:justify-self-end">{% if is_farsi %}نمایی کاربردی از فناوری‌هایی که استفاده می‌کنم؛ دسته‌بندی‌شده بر اساس نقشی که از زیرساخت تا تجربهٔ نهایی محصول دارند.{% else %}A practical view of the technologies I use—grouped by where they contribute to a product, from its foundation to the experience around it.{% endif %}</p>
       </div>
 
       {% if skill_groups %}
         <div class="space-y-8">
           {% for group in skill_groups %}
             <section class="reveal grid gap-6 rounded-3xl border border-zinc-200 bg-white/90 p-6 shadow-sm shadow-zinc-900/5 dark:border-white/10 dark:bg-zinc-900/80 dark:shadow-none sm:p-8 lg:grid-cols-[15rem_1fr] lg:gap-10" aria-labelledby="skill-category-{{ forloop.counter }}">
-              <div class="lg:border-r lg:border-zinc-200 lg:pr-8 dark:lg:border-white/10">
-                <h3 id="skill-category-{{ forloop.counter }}" class="font-display text-2xl font-bold text-zinc-900 dark:text-white">{{ group.grouper|default:"Other"|title }}</h3>
-                <p class="mt-2 text-sm text-zinc-500">{{ group.list|length }} skill{{ group.list|length|pluralize }}</p>
+              <div class="skill-category-heading">
+                <h3 id="skill-category-{{ forloop.counter }}" class="font-display text-2xl font-bold text-zinc-900 dark:text-white">{% if group.grouper %}{{ group.grouper|title }}{% elif is_farsi %}سایر{% else %}Other{% endif %}</h3>
+                <p class="mt-2 text-sm text-zinc-500">{% if is_farsi %}{{ group.list|length }} مهارت{% else %}{{ group.list|length }} skill{{ group.list|length|pluralize }}{% endif %}</p>
               </div>
 
               <ul class="grid gap-3 sm:grid-cols-2 xl:grid-cols-3" role="list">
@@ -179,7 +188,7 @@
                     </div>
                     <div class="min-w-0">
                       <h4 class="break-words font-display text-lg font-bold text-zinc-900 transition-colors group-hover:text-accent dark:text-white">{{ skill.title }}</h4>
-                      <p class="mt-0.5 truncate text-xs text-zinc-500">{{ group.grouper|default:"Other"|title }}</p>
+                      <p class="mt-0.5 truncate text-xs text-zinc-500">{% if group.grouper %}{{ group.grouper|title }}{% elif is_farsi %}سایر{% else %}Other{% endif %}</p>
                     </div>
                   </li>
                 {% endfor %}
@@ -189,8 +198,8 @@
         </div>
       {% else %}
         <div class="reveal rounded-3xl border border-dashed border-zinc-300 bg-white/80 px-8 py-14 text-center dark:border-white/15 dark:bg-zinc-900/70">
-          <p class="font-display text-xl font-bold text-zinc-900 dark:text-white">Skills are being added.</p>
-          <p class="mt-2 text-sm text-zinc-500">Technologies will appear here once they are added to the portfolio.</p>
+          <p class="font-display text-xl font-bold text-zinc-900 dark:text-white">{% if is_farsi %}مهارت‌ها در حال تکمیل‌اند.{% else %}Skills are being added.{% endif %}</p>
+          <p class="mt-2 text-sm text-zinc-500">{% if is_farsi %}پس از اضافه شدن فناوری‌ها به پورتفولیو، اینجا نمایش داده می‌شوند.{% else %}Technologies will appear here once they are added to the portfolio.{% endif %}</p>
         </div>
       {% endif %}
     </div>
@@ -199,9 +208,9 @@
   <section id="work" class="py-24">
     <div class="max-w-6xl mx-auto px-6">
       <div class="max-w-2xl mb-14">
-        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Selected work</p>
-        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Projects with the details left in.</h2>
-        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">Each project opens into a full case study with its decisions, features, tools, and supporting images.</p>
+        <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}پروژه‌های منتخب{% else %}Selected work{% endif %}</p>
+        <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">{% if is_farsi %}پروژه‌ها، با تمام جزئیات مهم.{% else %}Projects with the details left in.{% endif %}</h2>
+        <p class="reveal mt-5 text-zinc-500 dark:text-zinc-400 leading-relaxed">{% if is_farsi %}هر پروژه یک مطالعهٔ موردی کامل از تصمیم‌ها، قابلیت‌ها، ابزارها و تصاویر مرتبط را در اختیارتان می‌گذارد.{% else %}Each project opens into a full case study with its decisions, features, tools, and supporting images.{% endif %}</p>
       </div>
 
       {% if featured_projects %}
@@ -211,9 +220,9 @@
               <a href="{% url 'core:project_detail' project.slug %}" class="focus-ring block rounded-2xl h-full">
                 <div class="project-card-media overflow-hidden bg-zinc-100 dark:bg-zinc-800 {% if forloop.first and featured_projects|length == 3 %}h-72 lg:h-80{% else %}h-56{% endif %}">
                   {% if project.thumbnail %}
-                    <img src="{{ project.thumbnail.url }}" alt="{{ project.title }}" class="w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
+                    <img src="{{ project.thumbnail.url }}" alt="{% if is_farsi and project.fa_title %}{{ project.fa_title }}{% else %}{{ project.title }}{% endif %}" class="w-full h-full object-cover" loading="{% if forloop.first %}eager{% else %}lazy{% endif %}">
                   {% else %}
-                    <div class="h-full flex items-center justify-center font-display font-bold text-8xl text-zinc-300 dark:text-zinc-700">{{ project.title|first|upper }}</div>
+                    <div class="h-full flex items-center justify-center font-display font-bold text-8xl text-zinc-300 dark:text-zinc-700">{% if is_farsi and project.fa_title %}{{ project.fa_title|first }}{% else %}{{ project.title|first|upper }}{% endif %}</div>
                   {% endif %}
                 </div>
                 <div class="p-7">
@@ -221,15 +230,15 @@
                     {% for skill in project.skills.all|slice:":3" %}
                       <span class="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-800 text-zinc-600 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-700">{{ skill.title }}</span>
                     {% empty %}
-                      <span class="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700">{{ project.get_status_display }}</span>
+                      <span class="text-xs px-2.5 py-1 rounded-full bg-white dark:bg-zinc-800 text-zinc-500 border border-zinc-200 dark:border-zinc-700">{% if is_farsi %}{% if project.status == 'completed' %}تکمیل‌شده{% elif project.status == 'in progress' %}در حال انجام{% else %}پیش‌نویس{% endif %}{% else %}{{ project.get_status_display }}{% endif %}</span>
                     {% endfor %}
                     <span class="text-xs text-zinc-400 ml-auto">{{ project.created_at|date:"Y" }}</span>
                   </div>
-                  <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{{ project.title }}</h3>
-                  {% if project.short_description %}
-                    <p class="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ project.short_description|truncatechars:180 }}</p>
+                  <h3 class="font-display font-bold text-2xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{% if is_farsi and project.fa_title %}{{ project.fa_title }}{% else %}{{ project.title }}{% endif %}</h3>
+                  {% if project.short_description or project.fa_short_description %}
+                    <p class="mt-3 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{% if is_farsi and project.fa_short_description %}{{ project.fa_short_description|truncatechars:180 }}{% else %}{{ project.short_description|truncatechars:180 }}{% endif %}</p>
                   {% endif %}
-                  <span class="inline-flex mt-6 text-sm font-medium text-zinc-900 dark:text-white group-hover:text-accent transition-colors">View project →</span>
+                  <span class="inline-flex mt-6 text-sm font-medium text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{% if is_farsi %}مشاهده پروژه ←{% else %}View project →{% endif %}</span>
                 </div>
               </a>
             </article>
@@ -237,8 +246,8 @@
         </div>
       {% else %}
         <div class="reveal rounded-2xl border border-dashed border-zinc-300 dark:border-zinc-700 px-8 py-14 text-center">
-          <p class="font-display font-bold text-xl text-zinc-900 dark:text-white">Projects are being prepared.</p>
-          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">Featured work will appear here as soon as it is published.</p>
+          <p class="font-display font-bold text-xl text-zinc-900 dark:text-white">{% if is_farsi %}پروژه‌ها در حال آماده‌سازی‌اند.{% else %}Projects are being prepared.{% endif %}</p>
+          <p class="mt-2 text-sm text-zinc-500 dark:text-zinc-400">{% if is_farsi %}به‌محض انتشار، پروژه‌های منتخب اینجا نمایش داده می‌شوند.{% else %}Featured work will appear here as soon as it is published.{% endif %}</p>
         </div>
       {% endif %}
     </div>
@@ -250,7 +259,7 @@
         <div class="reveal order-2 md:order-1">
           {% if profile and profile.avatar %}
             <div class="hero-photo w-full aspect-square max-w-sm mx-auto overflow-hidden rounded-3xl bg-zinc-300 dark:bg-zinc-800">
-              <img src="{{ profile.avatar.url }}" alt="Portrait of {{ display_name }}" width="700" height="700" loading="lazy">
+              <img src="{{ profile.avatar.url }}" alt="{% if is_farsi %}تصویر {{ display_name }}{% else %}Portrait of {{ display_name }}{% endif %}" width="700" height="700" loading="lazy">
             </div>
           {% else %}
             <div class="w-full aspect-square max-w-sm mx-auto rounded-3xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 flex items-center justify-center">
@@ -260,11 +269,14 @@
         </div>
 
         <div class="order-1 md:order-2">
-          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">About me</p>
-          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">A bit about<br>who I am</h2>
+          <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">{% if is_farsi %}دربارهٔ من{% else %}About me{% endif %}</p>
+          <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">{% if is_farsi %}کمی بیشتر<br>دربارهٔ من{% else %}A bit about<br>who I am{% endif %}</h2>
 
           <div class="reveal text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-4">
-            {% if profile and profile.bio %}
+            {% if is_farsi %}
+              <p>به بخشی از توسعه علاقه دارم که ساختار فنی و تجربهٔ کاربر به هم می‌رسند: طراحی دقیق داده، خوانا نگه داشتن منطق برنامه و ساختن رابطی که به‌راحتی فهمیده شود.</p>
+              <p>این پورتفولیو روایتی از همین مسیر است؛ از زیرساخت فنی تا جزئیاتی که کاربران واقعاً می‌بینند و با آن کار می‌کنند.</p>
+            {% elif profile and profile.bio %}
               {{ profile.bio|linebreaks }}
             {% else %}
               <p>I enjoy the part of development where structure and experience meet: shaping data carefully, keeping application logic readable, and making the final interface easy to understand.</p>
@@ -273,7 +285,7 @@
           </div>
 
           {% if profile and profile.resume %}
-            <a href="{{ profile.resume.url }}" class="focus-ring inline-flex mt-8 rounded-sm text-sm font-medium text-accent nav-link" target="_blank" rel="noopener noreferrer">View résumé →</a>
+            <a href="{{ profile.resume.url }}" class="focus-ring inline-flex mt-8 rounded-sm text-sm font-medium text-accent nav-link" target="_blank" rel="noopener noreferrer">{% if is_farsi %}مشاهده رزومه ←{% else %}View résumé →{% endif %}</a>
           {% endif %}
         </div>
       </div>
@@ -288,9 +300,9 @@
 
         <div class="relative z-10 grid md:grid-cols-2 gap-12 items-start">
           <div>
-            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">Get in touch</p>
-            <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-white leading-tight mb-5">Let’s work<br>together</h2>
-            <p class="reveal text-zinc-400 leading-relaxed mb-8">Have a Django project, an API to build, or a backend that needs a second pair of eyes? Send the details and choose the easiest way for me to reply.</p>
+            <p class="reveal text-xs font-medium text-accent tracking-widest uppercase mb-3">{% if is_farsi %}در تماس باشیم{% else %}Get in touch{% endif %}</p>
+            <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-white leading-tight mb-5">{% if is_farsi %}بیایید با هم<br>کار کنیم{% else %}Let’s work<br>together{% endif %}</h2>
+            <p class="reveal text-zinc-400 leading-relaxed mb-8">{% if is_farsi %}پروژه‌ای با جنگو دارید، به یک API نیاز دارید یا می‌خواهید بک‌اندتان دقیق‌تر بررسی شود؟ جزئیات را بفرستید و راحت‌ترین راه پاسخ‌گویی را انتخاب کنید.{% else %}Have a Django project, an API to build, or a backend that needs a second pair of eyes? Send the details and choose the easiest way for me to reply.{% endif %}</p>
 
             <div class="reveal flex flex-col gap-4">
               {% if owner and owner.email %}
@@ -298,7 +310,7 @@
                   <span class="w-9 h-9 flex items-center justify-center bg-zinc-800 dark:bg-zinc-700 rounded-lg group-hover:bg-accent/20 transition-colors shrink-0">
                     <svg class="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                   </span>
-                  <span class="text-sm break-all">{{ owner.email }}</span>
+                  <span class="text-sm break-all ltr-content">{{ owner.email }}</span>
                 </a>
               {% endif %}
               {% if profile and profile.linkedin_url %}
@@ -324,53 +336,53 @@
             <form x-ref="form" action="{% url 'core:contact_message_create' %}" method="post" @submit.prevent="submit" aria-describedby="contact-form-help contact-form-status">
               {% csrf_token %}
               <div class="flex flex-col gap-4">
-                <p id="contact-form-help" class="text-xs leading-relaxed text-zinc-500">Fields marked with * are required. Add at least one contact method.</p>
+                <p id="contact-form-help" class="text-xs leading-relaxed text-zinc-500">{% if is_farsi %}فیلدهای دارای * الزامی‌اند. حداقل یک راه ارتباطی وارد کنید.{% else %}Fields marked with * are required. Add at least one contact method.{% endif %}</p>
 
                 <div class="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label for="contact-name" class="block text-xs font-medium text-zinc-400 mb-1.5">Name <span aria-hidden="true">*</span></label>
-                    <input type="text" id="contact-name" name="name" maxlength="120" placeholder="Jane Smith" required autocomplete="name"
+                    <label for="contact-name" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}نام{% else %}Name{% endif %} <span aria-hidden="true">*</span></label>
+                    <input type="text" id="contact-name" name="name" maxlength="120" placeholder="{% if is_farsi %}نام و نام خانوادگی{% else %}Jane Smith{% endif %}" required autocomplete="name"
                       :aria-invalid="Boolean(errors.name)" :aria-describedby="errors.name ? 'contact-name-error' : null"
                       class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
                     <p id="contact-name-error" x-cloak x-show="errors.name" x-text="errors.name?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
                   </div>
                   <div>
-                    <label for="contact-email" class="block text-xs font-medium text-zinc-400 mb-1.5">Email</label>
+                    <label for="contact-email" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}ایمیل{% else %}Email{% endif %}</label>
                     <input type="email" id="contact-email" name="email" maxlength="254" placeholder="jane@company.com" autocomplete="email" spellcheck="false"
                       :aria-invalid="Boolean(errors.email)" :aria-describedby="errors.email ? 'contact-email-error' : null"
-                      class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
+                      class="ltr-content text-left w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
                     <p id="contact-email-error" x-cloak x-show="errors.email" x-text="errors.email?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
                   </div>
                 </div>
 
                 <div class="grid sm:grid-cols-2 gap-4">
                   <div>
-                    <label for="contact-telegram" class="block text-xs font-medium text-zinc-400 mb-1.5">Telegram</label>
+                    <label for="contact-telegram" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}تلگرام{% else %}Telegram{% endif %}</label>
                     <input type="text" id="contact-telegram" name="telegram_id" maxlength="33" placeholder="@username" autocomplete="off" spellcheck="false"
                       :aria-invalid="Boolean(errors.telegram_id)" :aria-describedby="errors.telegram_id ? 'contact-telegram-error' : null"
-                      class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
+                      class="ltr-content text-left w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
                     <p id="contact-telegram-error" x-cloak x-show="errors.telegram_id" x-text="errors.telegram_id?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
                   </div>
                   <div>
-                    <label for="contact-phone" class="block text-xs font-medium text-zinc-400 mb-1.5">Phone</label>
+                    <label for="contact-phone" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}تلفن{% else %}Phone{% endif %}</label>
                     <input type="tel" id="contact-phone" name="phone" maxlength="26" placeholder="+98 912 123 4567" autocomplete="tel" inputmode="tel"
                       :aria-invalid="Boolean(errors.phone)" :aria-describedby="errors.phone ? 'contact-phone-error' : null"
-                      class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
+                      class="ltr-content text-left w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
                     <p id="contact-phone-error" x-cloak x-show="errors.phone" x-text="errors.phone?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
                   </div>
                 </div>
 
                 <div>
-                  <label for="contact-subject" class="block text-xs font-medium text-zinc-400 mb-1.5">Subject <span aria-hidden="true">*</span></label>
-                  <input type="text" id="contact-subject" name="subject" maxlength="200" placeholder="Project inquiry" required autocomplete="off"
+                  <label for="contact-subject" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}موضوع{% else %}Subject{% endif %} <span aria-hidden="true">*</span></label>
+                  <input type="text" id="contact-subject" name="subject" maxlength="200" placeholder="{% if is_farsi %}درخواست همکاری برای پروژه{% else %}Project inquiry{% endif %}" required autocomplete="off"
                     :aria-invalid="Boolean(errors.subject)" :aria-describedby="errors.subject ? 'contact-subject-error' : null"
                     class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors">
                   <p id="contact-subject-error" x-cloak x-show="errors.subject" x-text="errors.subject?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
                 </div>
 
                 <div>
-                  <label for="contact-message" class="block text-xs font-medium text-zinc-400 mb-1.5">Message <span aria-hidden="true">*</span></label>
-                  <textarea id="contact-message" name="message" rows="4" maxlength="5000" placeholder="Tell me about your project…" required autocomplete="off"
+                  <label for="contact-message" class="block text-xs font-medium text-zinc-400 mb-1.5">{% if is_farsi %}پیام{% else %}Message{% endif %} <span aria-hidden="true">*</span></label>
+                  <textarea id="contact-message" name="message" rows="4" maxlength="5000" placeholder="{% if is_farsi %}کمی دربارهٔ پروژه‌تان بنویسید…{% else %}Tell me about your project…{% endif %}" required autocomplete="off"
                     :aria-invalid="Boolean(errors.message)" :aria-describedby="errors.message ? 'contact-message-error' : null"
                     class="w-full bg-zinc-800 border border-zinc-700 text-white text-sm rounded-xl px-4 py-3 placeholder-zinc-600 focus:outline-none focus:border-accent focus:ring-2 focus:ring-accent/20 transition-colors resize-none"></textarea>
                   <p id="contact-message-error" x-cloak x-show="errors.message" x-text="errors.message?.[0]" class="mt-1.5 text-xs text-orange-300"></p>
@@ -379,7 +391,7 @@
                 <p x-cloak x-show="errors.__all__" x-text="errors.__all__?.[0]" class="rounded-xl border border-orange-400/30 bg-orange-400/10 px-4 py-3 text-sm text-orange-200"></p>
 
                 <button type="submit" :disabled="submitting" class="hero-cta focus-ring w-full bg-accent text-white font-display font-bold text-sm py-3.5 rounded-xl hover:bg-accent-light disabled:opacity-60 disabled:cursor-wait transition-colors">
-                  <span x-text="submitting ? 'Sending…' : 'Send message →'"></span>
+                  <span x-text="submitting ? '{% if is_farsi %}در حال ارسال…{% else %}Sending…{% endif %}' : '{% if is_farsi %}ارسال پیام ←{% else %}Send message →{% endif %}'"></span>
                 </button>
 
                 <p id="contact-form-status" role="status" aria-live="polite" x-cloak x-show="status" x-text="status" :class="success ? 'text-emerald-300' : 'text-orange-300'" class="text-sm text-center"></p>
@@ -417,7 +429,7 @@
 
             if (!response.ok) {
               this.errors = data.errors || {};
-              this.status = data.error || 'Please check the highlighted fields and try again.';
+              this.status = data.error || '{% if is_farsi %}فیلدهای مشخص‌شده را بررسی و دوباره تلاش کنید.{% else %}Please check the highlighted fields and try again.{% endif %}';
               this.$nextTick(() => {
                 const firstField = Object.keys(this.errors).find(field => field !== '__all__');
                 if (firstField) this.$refs.form.elements[firstField]?.focus();
@@ -426,10 +438,10 @@
             }
 
             this.success = true;
-            this.status = data.message || 'Your message has been received.';
+            this.status = data.message || '{% if is_farsi %}پیام شما دریافت شد.{% else %}Your message has been received.{% endif %}';
             this.$refs.form.reset();
           } catch (error) {
-            this.status = 'The message could not be sent. Please try again.';
+            this.status = '{% if is_farsi %}پیام ارسال نشد. لطفاً دوباره تلاش کنید.{% else %}The message could not be sent. Please try again.{% endif %}';
           } finally {
             this.submitting = false;
           }

@@ -71,7 +71,15 @@ class ProjectAdmin(admin.ModelAdmin):
     list_display_links = ("title",)
     list_editable = ("status", "is_featured", "display_order")
     list_filter = ("status", "is_featured", "skills", "created_at")
-    search_fields = ("title", "short_description", "description", "skills__title")
+    search_fields = (
+        "title",
+        "fa_title",
+        "short_description",
+        "fa_short_description",
+        "description",
+        "fa_description",
+        "skills__title",
+    )
     prepopulated_fields = {"slug": ("title",)}
     filter_horizontal = ("skills",)
     readonly_fields = ("thumbnail_preview", "created_at", "updated_at")
@@ -90,6 +98,16 @@ class ProjectAdmin(admin.ModelAdmin):
                     "description",
                     "thumbnail",
                     "thumbnail_preview",
+                )
+            },
+        ),
+        (
+            "محتوای فارسی",
+            {
+                "fields": (
+                    "fa_title",
+                    "fa_short_description",
+                    "fa_description",
                 )
             },
         ),

@@ -1,10 +1,10 @@
 {% extends "base.html" %}
 {% load static %}
 
-{% block title %}{{ project.title }} — Project case study{% endblock %}
-{% block meta_description %}{{ project.short_description|default:project.description|truncatechars:160 }}{% endblock %}
-{% block og_title %}{{ project.title }} — Project case study{% endblock %}
-{% block og_description %}{{ project.short_description|default:project.description|truncatechars:160 }}{% endblock %}
+{% block title %}{% if is_farsi and project.fa_title %}{{ project.fa_title }} — مطالعهٔ موردی پروژه{% else %}{{ project.title }} — Project case study{% endif %}{% endblock %}
+{% block meta_description %}{% if is_farsi and project.fa_short_description %}{{ project.fa_short_description|truncatechars:160 }}{% elif is_farsi and project.fa_description %}{{ project.fa_description|truncatechars:160 }}{% else %}{{ project.short_description|default:project.description|truncatechars:160 }}{% endif %}{% endblock %}
+{% block og_title %}{% if is_farsi and project.fa_title %}{{ project.fa_title }} — مطالعهٔ موردی پروژه{% else %}{{ project.title }} — Project case study{% endif %}{% endblock %}
+{% block og_description %}{% if is_farsi and project.fa_short_description %}{{ project.fa_short_description|truncatechars:160 }}{% elif is_farsi and project.fa_description %}{{ project.fa_description|truncatechars:160 }}{% else %}{{ project.short_description|default:project.description|truncatechars:160 }}{% endif %}{% endblock %}
 {% block og_type %}article{% endblock %}
 
 {% block extra_head %}
@@ -15,7 +15,7 @@
       position: absolute;
       top: 1.5rem;
       bottom: 1.5rem;
-      left: -1rem;
+      inset-inline-start: -1rem;
       width: .3rem;
       border-radius: 999px;
       background: #FF6B2B;
@@ -28,8 +28,22 @@
       margin-bottom: 1.5rem;
     }
     .dark .project-copy p { color: #a1a1aa; }
+    .project-meta {
+      border-block-start: 1px solid rgb(228 228 231);
+      padding-block-start: 1.5rem;
+    }
+    .dark .project-meta { border-block-start-color: rgb(39 39 42); }
+    @media (min-width: 1024px) {
+      .project-meta {
+        border-block-start: 0;
+        border-inline-start: 1px solid rgb(228 228 231);
+        padding-block-start: 0;
+        padding-inline-start: 2rem;
+      }
+      .dark .project-meta { border-inline-start-color: rgb(39 39 42); }
+    }
     @media (max-width: 767px) {
-      .hero-frame::before { left: -.55rem; }
+      .hero-frame::before { inset-inline-start: -.55rem; }
     }
   </style>
 {% endblock %}
@@ -39,52 +53,52 @@
       <header class="pt-32 md:pt-40 pb-12">
         <div class="max-w-6xl mx-auto px-6">
           <a href="{% url 'core:home' %}#work" class="focus-ring inline-flex items-center gap-2 rounded-sm text-sm text-zinc-500 dark:text-zinc-400 hover:text-accent transition-colors mb-10">
-            <span aria-hidden="true">←</span>
-            Back to projects
+            <span aria-hidden="true">{% if is_farsi %}→{% else %}←{% endif %}</span>
+            {% if is_farsi %}بازگشت به پروژه‌ها{% else %}Back to projects{% endif %}
           </a>
 
           <div class="grid lg:grid-cols-[1fr_18rem] gap-12 lg:gap-20 items-end">
             <div>
               <div class="flex flex-wrap items-center gap-2.5 mb-6">
                 {% if project.is_featured %}
-                  <span class="text-xs font-medium uppercase tracking-widest bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-3 py-1.5 rounded-full">Featured project</span>
+                  <span class="text-xs font-medium uppercase tracking-widest bg-orange-50 dark:bg-zinc-900 text-accent border border-orange-200 dark:border-zinc-800 px-3 py-1.5 rounded-full">{% if is_farsi %}پروژهٔ منتخب{% else %}Featured project{% endif %}</span>
                 {% endif %}
                 <span class="text-xs font-medium uppercase tracking-widest px-3 py-1.5 rounded-full
                   {% if project.status == 'completed' %}bg-emerald-50 dark:bg-emerald-950/30 text-emerald-700 dark:text-emerald-400 border border-emerald-200 dark:border-emerald-900
                   {% elif project.status == 'in progress' %}bg-amber-50 dark:bg-amber-950/30 text-amber-700 dark:text-amber-400 border border-amber-200 dark:border-amber-900
                   {% else %}bg-zinc-100 dark:bg-zinc-900 text-zinc-500 dark:text-zinc-400 border border-zinc-200 dark:border-zinc-800{% endif %}">
-                  {{ project.get_status_display }}
+                  {% if is_farsi %}{% if project.status == 'completed' %}تکمیل‌شده{% elif project.status == 'in progress' %}در حال انجام{% else %}پیش‌نویس{% endif %}{% else %}{{ project.get_status_display }}{% endif %}
                 </span>
               </div>
 
-              <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">Project dossier · {{ project.created_at|date:"Y" }}</p>
+              <p class="reveal text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">{% if is_farsi %}پروندهٔ پروژه · {{ project.created_at|date:"Y" }}{% else %}Project dossier · {{ project.created_at|date:"Y" }}{% endif %}</p>
               <h1 class="reveal font-display font-bold text-5xl md:text-6xl lg:text-7xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white max-w-4xl">
-                {{ project.title }}
+                {% if is_farsi and project.fa_title %}{{ project.fa_title }}{% else %}{{ project.title }}{% endif %}
               </h1>
-              {% if project.short_description %}
+              {% if project.short_description or project.fa_short_description %}
                 <p class="reveal mt-7 text-lg md:text-xl leading-relaxed text-zinc-500 dark:text-zinc-400 max-w-3xl">
-                  {{ project.short_description }}
+                  {% if is_farsi and project.fa_short_description %}{{ project.fa_short_description }}{% else %}{{ project.short_description }}{% endif %}
                 </p>
               {% endif %}
             </div>
 
-            <aside class="reveal border-t lg:border-t-0 lg:border-l border-zinc-200 dark:border-zinc-800 pt-6 lg:pt-0 lg:pl-8">
+            <aside class="project-meta reveal">
               <dl class="grid grid-cols-2 lg:grid-cols-1 gap-6">
                 <div>
-                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">Published</dt>
-                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ project.created_at|date:"M Y" }}</dd>
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">{% if is_farsi %}تاریخ انتشار{% else %}Published{% endif %}</dt>
+                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{% if is_farsi %}{{ project.created_at|date:"Y/m" }}{% else %}{{ project.created_at|date:"M Y" }}{% endif %}</dd>
                 </div>
                 <div>
-                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">Last updated</dt>
-                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{{ project.updated_at|date:"M Y" }}</dd>
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-1.5">{% if is_farsi %}آخرین به‌روزرسانی{% else %}Last updated{% endif %}</dt>
+                  <dd class="text-sm font-medium text-zinc-800 dark:text-zinc-200">{% if is_farsi %}{{ project.updated_at|date:"Y/m" }}{% else %}{{ project.updated_at|date:"M Y" }}{% endif %}</dd>
                 </div>
                 <div class="col-span-2 lg:col-span-1">
-                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-2">Toolbox</dt>
+                  <dt class="text-[.68rem] uppercase tracking-[.18em] text-zinc-400 mb-2">{% if is_farsi %}ابزارها{% else %}Toolbox{% endif %}</dt>
                   <dd class="flex flex-wrap gap-2">
                     {% for skill in project.skills.all %}
                       <span class="text-xs px-2.5 py-1 rounded-full bg-zinc-100 dark:bg-zinc-900 text-zinc-600 dark:text-zinc-400">{{ skill.title }}</span>
                     {% empty %}
-                      <span class="text-sm text-zinc-400">Not listed yet</span>
+                      <span class="text-sm text-zinc-400">{% if is_farsi %}هنوز ثبت نشده{% else %}Not listed yet{% endif %}</span>
                     {% endfor %}
                   </dd>
                 </div>
@@ -94,32 +108,32 @@
         </div>
       </header>
 
-      <section class="max-w-6xl mx-auto px-6 pb-20" aria-label="Project cover">
+      <section class="max-w-6xl mx-auto px-6 pb-20" aria-label="{% if is_farsi %}تصویر اصلی پروژه{% else %}Project cover{% endif %}">
         <div class="hero-frame reveal">
           {% if project.thumbnail %}
             <div class="overflow-hidden rounded-3xl bg-zinc-100 dark:bg-zinc-900 shadow-2xl shadow-zinc-900/10 dark:shadow-black/30">
-              <img src="{{ project.thumbnail.url }}" alt="{{ project.title }} project cover" class="w-full h-[22rem] md:h-[34rem] object-cover" loading="eager">
+              <img src="{{ project.thumbnail.url }}" alt="{% if is_farsi and project.fa_title %}تصویر اصلی پروژهٔ {{ project.fa_title }}{% else %}{{ project.title }} project cover{% endif %}" class="w-full h-[22rem] md:h-[34rem] object-cover" loading="eager">
             </div>
           {% else %}
             <div class="rounded-3xl min-h-[22rem] md:min-h-[34rem] flex items-center justify-center overflow-hidden bg-zinc-100 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800">
               <div class="text-center px-6">
-                <span class="block font-display font-bold text-8xl md:text-9xl text-zinc-300 dark:text-zinc-800">{{ project.title|first|upper }}</span>
-                <span class="block mt-5 text-xs uppercase tracking-[.25em] text-zinc-400">Cover image coming soon</span>
+                <span class="block font-display font-bold text-8xl md:text-9xl text-zinc-300 dark:text-zinc-800">{% if is_farsi and project.fa_title %}{{ project.fa_title|first }}{% else %}{{ project.title|first|upper }}{% endif %}</span>
+                <span class="block mt-5 text-xs uppercase tracking-[.25em] text-zinc-400">{% if is_farsi %}تصویر اصلی به‌زودی اضافه می‌شود{% else %}Cover image coming soon{% endif %}</span>
               </div>
             </div>
           {% endif %}
         </div>
       </section>
 
-      {% if project.description %}
+      {% if project.description or project.fa_description %}
         <section id="project-overview" class="py-20 border-y border-zinc-100 dark:border-zinc-900">
           <div class="max-w-6xl mx-auto px-6 grid md:grid-cols-[14rem_1fr] gap-10 md:gap-20">
             <div>
-              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">The project</p>
-              <h2 class="font-display font-bold text-3xl md:text-4xl text-zinc-900 dark:text-white">Overview</h2>
+              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}پروژه{% else %}The project{% endif %}</p>
+              <h2 class="font-display font-bold text-3xl md:text-4xl text-zinc-900 dark:text-white">{% if is_farsi %}معرفی{% else %}Overview{% endif %}</h2>
             </div>
             <div class="project-copy max-w-3xl reveal">
-              {{ project.description|linebreaks }}
+              {% if is_farsi and project.fa_description %}{{ project.fa_description|linebreaks }}{% else %}{{ project.description|linebreaks }}{% endif %}
             </div>
           </div>
         </section>
@@ -129,8 +143,8 @@
         <section id="features" class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
           <div class="max-w-6xl mx-auto px-6">
             <div class="max-w-2xl mb-14">
-              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">What makes it work</p>
-              <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Key features</h2>
+              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}آنچه پروژه را کارآمد می‌کند{% else %}What makes it work{% endif %}</p>
+              <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">{% if is_farsi %}قابلیت‌های کلیدی{% else %}Key features{% endif %}</h2>
             </div>
 
             <div class="grid md:grid-cols-2 gap-5">
@@ -157,10 +171,10 @@
           <div class="max-w-6xl mx-auto px-6">
             <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-4 mb-14">
               <div>
-                <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">A closer look</p>
-                <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">Project gallery</h2>
+                <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}نگاهی نزدیک‌تر{% else %}A closer look{% endif %}</p>
+                <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white">{% if is_farsi %}گالری پروژه{% else %}Project gallery{% endif %}</h2>
               </div>
-              <p class="text-sm text-zinc-400">{{ project.images.all|length }} image{{ project.images.all|length|pluralize }}</p>
+              <p class="text-sm text-zinc-400">{% if is_farsi %}{{ project.images.all|length }} تصویر{% else %}{{ project.images.all|length }} image{{ project.images.all|length|pluralize }}{% endif %}</p>
             </div>
 
             <div class="grid md:grid-cols-2 gap-6">
@@ -185,9 +199,9 @@
         <section class="py-20 border-y border-zinc-100 dark:border-zinc-900" aria-labelledby="project-links-title">
           <div class="max-w-6xl mx-auto px-6">
             <div class="max-w-2xl mb-12">
-              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">References</p>
-              <h2 id="project-links-title" class="font-display font-bold text-3xl md:text-4xl text-zinc-900 dark:text-white">Project links</h2>
-              <p class="mt-4 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">Open the code or read the original project update.</p>
+              <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}منابع{% else %}References{% endif %}</p>
+              <h2 id="project-links-title" class="font-display font-bold text-3xl md:text-4xl text-zinc-900 dark:text-white">{% if is_farsi %}لینک‌های پروژه{% else %}Project links{% endif %}</h2>
+              <p class="mt-4 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{% if is_farsi %}کد پروژه را ببینید یا گزارش اصلی آن را بخوانید.{% else %}Open the code or read the original project update.{% endif %}</p>
             </div>
 
             <div class="max-w-3xl border-t border-zinc-200 dark:border-zinc-800">
@@ -199,7 +213,7 @@
                   </span>
                   <span>
                     <span class="block font-display font-bold text-xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">GitHub</span>
-                    <span class="block mt-1 text-sm text-zinc-500 dark:text-zinc-400">Source code and repository</span>
+                    <span class="block mt-1 text-sm text-zinc-500 dark:text-zinc-400">{% if is_farsi %}کد منبع و مخزن پروژه{% else %}Source code and repository{% endif %}</span>
                   </span>
                   <span class="text-xl text-zinc-400 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" aria-hidden="true">↗</span>
                 </a>
@@ -213,7 +227,7 @@
                   </span>
                   <span>
                     <span class="block font-display font-bold text-xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">LinkedIn</span>
-                    <span class="block mt-1 text-sm text-zinc-500 dark:text-zinc-400">Project post and discussion</span>
+                    <span class="block mt-1 text-sm text-zinc-500 dark:text-zinc-400">{% if is_farsi %}پست پروژه و گفت‌وگوها{% else %}Project post and discussion{% endif %}</span>
                   </span>
                   <span class="text-xl text-zinc-400 group-hover:text-accent group-hover:translate-x-1 group-hover:-translate-y-1 transition-all" aria-hidden="true">↗</span>
                 </a>
@@ -228,8 +242,8 @@
       <section class="py-24 bg-zinc-50 dark:bg-zinc-900/40">
         <div class="max-w-6xl mx-auto px-6">
           <div class="mb-12">
-            <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">Keep exploring</p>
-            <h2 class="font-display font-bold text-4xl text-zinc-900 dark:text-white">More projects</h2>
+            <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-3">{% if is_farsi %}پروژه‌های بیشتر{% else %}Keep exploring{% endif %}</p>
+            <h2 class="font-display font-bold text-4xl text-zinc-900 dark:text-white">{% if is_farsi %}ادامهٔ پروژه‌ها{% else %}More projects{% endif %}</h2>
           </div>
 
           <div class="grid md:grid-cols-3 gap-6">
@@ -237,16 +251,16 @@
               <article class="reveal group overflow-hidden rounded-2xl bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 hover:border-accent transition-colors">
                 <a href="{% url 'core:project_detail' related_project.slug %}" class="focus-ring block rounded-2xl">
                   {% if related_project.thumbnail %}
-                    <img src="{{ related_project.thumbnail.url }}" alt="{{ related_project.title }}" class="w-full h-48 object-cover" loading="lazy">
+                    <img src="{{ related_project.thumbnail.url }}" alt="{% if is_farsi and related_project.fa_title %}{{ related_project.fa_title }}{% else %}{{ related_project.title }}{% endif %}" class="w-full h-48 object-cover" loading="lazy">
                   {% else %}
-                    <div class="h-48 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 font-display font-bold text-6xl text-zinc-300 dark:text-zinc-700">{{ related_project.title|first|upper }}</div>
+                    <div class="h-48 flex items-center justify-center bg-zinc-100 dark:bg-zinc-800 font-display font-bold text-6xl text-zinc-300 dark:text-zinc-700">{% if is_farsi and related_project.fa_title %}{{ related_project.fa_title|first }}{% else %}{{ related_project.title|first|upper }}{% endif %}</div>
                   {% endif %}
                   <div class="p-6">
-                    <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{{ related_project.title }}</h3>
-                    {% if related_project.short_description %}
-                      <p class="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{{ related_project.short_description|truncatechars:105 }}</p>
+                    <h3 class="font-display font-bold text-xl text-zinc-900 dark:text-white group-hover:text-accent transition-colors">{% if is_farsi and related_project.fa_title %}{{ related_project.fa_title }}{% else %}{{ related_project.title }}{% endif %}</h3>
+                    {% if related_project.short_description or related_project.fa_short_description %}
+                      <p class="mt-2 text-sm leading-relaxed text-zinc-500 dark:text-zinc-400">{% if is_farsi and related_project.fa_short_description %}{{ related_project.fa_short_description|truncatechars:105 }}{% else %}{{ related_project.short_description|truncatechars:105 }}{% endif %}</p>
                     {% endif %}
-                    <span class="inline-block mt-5 text-sm font-medium text-accent">View project →</span>
+                    <span class="inline-block mt-5 text-sm font-medium text-accent">{% if is_farsi %}مشاهده پروژه ←{% else %}View project →{% endif %}</span>
                   </div>
                 </a>
               </article>
@@ -258,11 +272,11 @@
 
     <section class="py-24">
       <div class="max-w-6xl mx-auto px-6 text-center">
-        <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">Next conversation</p>
-        <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white mb-5">Have a project in mind?</h2>
-        <p class="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto mb-8">Tell me what you are building, where it is stuck, and what a successful result looks like.</p>
+        <p class="text-xs font-medium text-accent tracking-[0.22em] uppercase mb-4">{% if is_farsi %}گفت‌وگوی بعدی{% else %}Next conversation{% endif %}</p>
+        <h2 class="font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white mb-5">{% if is_farsi %}پروژه‌ای در ذهن دارید؟{% else %}Have a project in mind?{% endif %}</h2>
+        <p class="text-zinc-500 dark:text-zinc-400 max-w-lg mx-auto mb-8">{% if is_farsi %}بگویید چه چیزی می‌سازید، کجای مسیر به مانع خورده‌اید و نتیجهٔ موفق برایتان چه شکلی دارد.{% else %}Tell me what you are building, where it is stuck, and what a successful result looks like.{% endif %}</p>
         <a href="{% url 'core:home' %}#contact" class="focus-ring inline-flex items-center gap-2 rounded-full bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-7 py-3.5 text-sm font-medium hover:bg-accent dark:hover:bg-accent dark:hover:text-white transition-colors">
-          Start a conversation <span aria-hidden="true">→</span>
+          {% if is_farsi %}شروع گفت‌وگو{% else %}Start a conversation{% endif %} <span aria-hidden="true">{% if is_farsi %}←{% else %}→{% endif %}</span>
         </a>
       </div>
     </section>
