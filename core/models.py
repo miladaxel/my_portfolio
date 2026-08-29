@@ -25,9 +25,12 @@ class Project(models.Model):
 
 
     title = models.CharField(max_length=100, unique=True)
+    fa_title = models.CharField(max_length=100, unique=True, blank=True, null=True)
     slug = models.SlugField(max_length=100, unique=True)
     short_description = models.TextField(blank=True, null=True)
+    fa_short_description = models.TextField(blank=True, null=True)
     description = models.TextField(blank=True, null=True)
+    fa_description = models.TextField(blank=True, null=True)
     thumbnail = models.ImageField(upload_to='projects/', blank=True, null=True)
     is_featured = models.BooleanField(default=False)
     status = models.CharField(max_length=20, choices=Status.choices, default=Status.DRAFT)
