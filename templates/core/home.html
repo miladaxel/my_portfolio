@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 
 {% block title %}{% if is_farsi %}{{ display_name }} — توسعه‌دهنده پایتون و جنگو{% else %}{{ display_name }} — Python & Django Developer{% endif %}{% endblock %}
-{% block meta_description %}{% if is_farsi %}پورتفولیوی {{ display_name }}؛ متمرکز بر اپلیکیشن‌های وب خوش‌ساخت، بک‌اندهای قابل‌اعتماد و تجربه‌های کاربری روشن.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Portfolio of {{ display_name }}, focused on thoughtful web applications, reliable backends, and clear user experiences.{% endif %}{% endblock %}
+{% block meta_description %}{% if is_farsi and profile and profile.fa_short_bio %}{{ profile.fa_short_bio|truncatechars:160 }}{% elif is_farsi %}پورتفولیوی {{ display_name }}؛ متمرکز بر اپلیکیشن‌های وب خوش‌ساخت، بک‌اندهای قابل‌اعتماد و تجربه‌های کاربری روشن.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Portfolio of {{ display_name }}, focused on thoughtful web applications, reliable backends, and clear user experiences.{% endif %}{% endblock %}
 {% block og_title %}{% if is_farsi %}{{ display_name }} — پورتفولیوی توسعه‌دهنده{% else %}{{ display_name }} — Developer Portfolio{% endif %}{% endblock %}
-{% block og_description %}{% if is_farsi %}پروژه‌های منتخب وب، مهارت‌های فنی و تجربه‌های توسعه.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Selected web projects, technical skills, and development work.{% endif %}{% endblock %}
+{% block og_description %}{% if is_farsi and profile and profile.fa_short_bio %}{{ profile.fa_short_bio|truncatechars:160 }}{% elif is_farsi %}پروژه‌های منتخب وب، مهارت‌های فنی و تجربه‌های توسعه.{% elif profile and profile.short_bio %}{{ profile.short_bio|truncatechars:160 }}{% else %}Selected web projects, technical skills, and development work.{% endif %}{% endblock %}
 
 {% block extra_head %}
   <style>
@@ -74,10 +74,12 @@
         <div>
           <p class="reveal text-sm lg:text-base font-medium text-accent tracking-widest uppercase mb-4">{% if is_farsi %}توسعه‌دهنده وب با پایتون{% else %}Python web developer{% endif %}</p>
           <h1 class="reveal font-display font-bold text-5xl md:text-7xl lg:text-8xl leading-[1.02] tracking-tight text-zinc-900 dark:text-white mb-6 lg:mb-7">
-            {% if is_farsi %}سلام، من <span class="text-accent">میلادم</span>{% else %}Hi, I’m <span class="text-accent">Milad</span>{% endif %}
+            {% if is_farsi %}سلام، من <span class="text-accent">{{ display_name }}</span> هستم{% else %}Hi, I’m <span class="text-accent">{{ display_name }}</span>{% endif %}
           </h1>
           <p class="reveal text-lg md:text-xl lg:text-2xl text-zinc-500 dark:text-zinc-400 font-light leading-relaxed max-w-xl mb-9 lg:mb-10">
-            {% if is_farsi %}
+            {% if is_farsi and profile and profile.fa_short_bio %}
+              {{ profile.fa_short_bio }}
+            {% elif is_farsi %}
               توسعه‌دهندهٔ بک‌اند با تمرکز بر پایتون و جنگو هستم؛ ایده‌ها را به اپلیکیشن‌هایی قابل نگه‌داری و تجربه‌هایی دقیق و روشن تبدیل می‌کنم.
             {% elif profile and profile.short_bio %}
               {{ profile.short_bio }}
@@ -273,7 +275,9 @@
           <h2 class="reveal font-display font-bold text-4xl md:text-5xl text-zinc-900 dark:text-white leading-tight mb-6">{% if is_farsi %}کمی بیشتر<br>دربارهٔ من{% else %}A bit about<br>who I am{% endif %}</h2>
 
           <div class="reveal text-zinc-500 dark:text-zinc-400 leading-relaxed space-y-4">
-            {% if is_farsi %}
+            {% if is_farsi and profile and profile.fa_bio %}
+              {{ profile.fa_bio|linebreaks }}
+            {% elif is_farsi %}
               <p>به بخشی از توسعه علاقه دارم که ساختار فنی و تجربهٔ کاربر به هم می‌رسند: طراحی دقیق داده، خوانا نگه داشتن منطق برنامه و ساختن رابطی که به‌راحتی فهمیده شود.</p>
               <p>این پورتفولیو روایتی از همین مسیر است؛ از زیرساخت فنی تا جزئیاتی که کاربران واقعاً می‌بینند و با آن کار می‌کنند.</p>
             {% elif profile and profile.bio %}

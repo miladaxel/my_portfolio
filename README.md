@@ -10,13 +10,14 @@ The repository already includes a Git-ignored `.env` configured for local use.
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
-python -m pip install -r requirements.txt
+python -m pip install -r requirements-dev.txt
 python manage.py migrate
 python manage.py runserver
 ```
 
 Development uses SQLite, enables Django debug pages, and serves uploaded media
-through Django. To create a fresh configuration, copy `.env.example` to `.env`.
+through Django. It also enables Django Debug Toolbar at `/__debug__/`. To create
+a fresh configuration, copy `.env.example` to `.env`.
 
 ## Production
 
@@ -68,6 +69,7 @@ Cloudinary for uploaded media, so no persistent Render disk is required.
 | Setting | Development | Production |
 | --- | --- | --- |
 | Debug pages | Enabled by default | Always disabled |
+| Django Debug Toolbar | Installed and enabled | Not installed or enabled |
 | Database | Local SQLite | `DATABASE_URL` (PostgreSQL recommended) |
 | Static files | Django development server | WhiteNoise + `collectstatic` |
 | Uploaded media | Local `media/` directory | Cloudinary |

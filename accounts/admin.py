@@ -11,8 +11,11 @@ class ProfileInline(admin.StackedInline):
     max_num = 1
     can_delete = False
     fields = (
+        "fa_name",
         "short_bio",
+        "fa_short_bio",
         "bio",
+        "fa_bio",
         "avatar",
         "github_url",
         "linkedin_url",
@@ -45,19 +48,31 @@ class CustomUserAdmin(UserAdmin):
 
 @admin.register(Profile)
 class ProfileAdmin(admin.ModelAdmin):
-    list_display = ("user", "full_name", "github_url", "linkedin_url", "updated_at")
+    list_display = (
+        "user",
+        "full_name",
+        "fa_name",
+        "github_url",
+        "linkedin_url",
+        "updated_at",
+    )
     search_fields = (
         "user__username",
         "user__first_name",
         "user__last_name",
         "user__email",
         "bio",
+        "fa_name",
+        "fa_short_bio",
+        "fa_bio",
     )
     list_select_related = ("user",)
     readonly_fields = ("avatar_preview", "updated_at")
     fieldsets = (
         ("کاربر", {"fields": ("user",)}),
-        ("معرفی", {"fields": ("short_bio", "bio", "avatar", "avatar_preview")}),
+        ("معرفی انگلیسی", {"fields": ("short_bio", "bio")}),
+        ("معرفی فارسی", {"fields": ("fa_name", "fa_short_bio", "fa_bio")}),
+        ("تصویر", {"fields": ("avatar", "avatar_preview")}),
         ("ارتباطات و رزومه", {"fields": ("github_url", "linkedin_url", "resume")}),
         ("زمان‌ها", {"fields": ("updated_at",), "classes": ("collapse",)}),
     )

@@ -6,6 +6,8 @@ from django.core.management.base import CommandError
 from django.test import TestCase
 from django.urls import reverse
 
+from .models import Profile
+
 
 class AccountsAdminTests(TestCase):
     @classmethod
@@ -14,6 +16,12 @@ class AccountsAdminTests(TestCase):
             username="admin",
             email="admin@example.com",
             password="test-password",
+        )
+        cls.profile = Profile.objects.create(
+            user=cls.admin_user,
+            fa_name="مدیر سایت",
+            fa_short_bio="معرفی کوتاه فارسی",
+            fa_bio="زندگی‌نامهٔ فارسی",
         )
 
     def setUp(self):
@@ -26,11 +34,24 @@ class AccountsAdminTests(TestCase):
 
         self.assertEqual(response.status_code, 200)
         self.assertContains(response, "profile-TOTAL_FORMS")
+        self.assertContains(response, 'name="profile-0-fa_name"')
+        self.assertContains(response, 'name="profile-0-fa_short_bio"')
+        self.assertContains(response, 'name="profile-0-fa_bio"')
 
     def test_profile_admin_page_is_available(self):
         response = self.client.get(reverse("admin:accounts_profile_changelist"))
 
         self.assertEqual(response.status_code, 200)
+
+    def test_profile_change_page_contains_persian_fields(self):
+        response = self.client.get(
+            reverse("admin:accounts_profile_change", args=(self.profile.pk,))
+        )
+
+        self.assertEqual(response.status_code, 200)
+        self.assertContains(response, 'name="fa_name"')
+        self.assertContains(response, 'name="fa_short_bio"')
+        self.assertContains(response, 'name="fa_bio"')
 
 
 class EnsureSuperuserCommandTests(TestCase):

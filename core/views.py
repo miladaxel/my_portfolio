@@ -40,6 +40,7 @@ def set_site_language(request):
 def home(request):
     profile = Profile.objects.select_related("user").first()
     owner = profile.user if profile else User.objects.filter(is_superuser=True).order_by("id").first()
+    is_farsi = get_site_language(request) == "fa"
 
     featured_projects = list(
         Project.objects.filter(is_featured=True)
@@ -52,8 +53,10 @@ def home(request):
             .order_by("display_order", "-created_at")[:3]
         )
 
-    display_name = "Portfolio"
-    if owner:
+    display_name = "پورتفولیو" if is_farsi else "Portfolio"
+    if is_farsi and profile and profile.fa_name:
+        display_name = profile.fa_name.strip()
+    elif owner:
         display_name = owner.get_full_name().strip() or owner.username.replace("_", " ").title()
 
     return render(

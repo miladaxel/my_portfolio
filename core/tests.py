@@ -194,6 +194,24 @@ class HomeViewTests(TestCase):
         self.assertContains(response, "Long profile biography.")
         self.assertContains(response, "https://github.com/example")
 
+    def test_home_uses_persian_profile_fields_in_farsi(self):
+        profile = Profile.objects.create(
+            user=self.user,
+            fa_name="میلاد سلطان‌محمدی",
+            fa_short_bio="معرفی کوتاه فارسی پروفایل.",
+            fa_bio="زندگی‌نامهٔ کامل فارسی پروفایل.",
+        )
+        session = self.client.session
+        session["site_language"] = "fa"
+        session.save()
+
+        response = self.client.get(reverse("core:home"))
+
+        self.assertContains(response, profile.fa_name)
+        self.assertContains(response, profile.fa_short_bio)
+        self.assertContains(response, profile.fa_bio)
+        self.assertContains(response, f"سلام، من <span class=\"text-accent\">{profile.fa_name}</span> هستم")
+
     def test_home_contact_form_posts_to_contact_message_api(self):
         response = self.client.get(reverse("core:home"))
 
